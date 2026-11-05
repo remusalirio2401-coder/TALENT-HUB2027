@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Talent Hub 2027 · Plan de vuelo</title>
+<meta name="description" content="Propuesta de evolución de Talent Hub para 2027: de un calendario de actividades a una cartera de desafíos del negocio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;700;800;900&family=Red+Hat+Mono:wght@500;700&family=Red+Hat+Text:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#FF0000; --magenta:#B50080; --blue:#1D9BF0; --sky:#89D4E1;
+  --bg:#FFFFFF; --bg-2:#F4F4F6; --ink:#141414; --ink-2:#55555C; --line:#E2E2E6;
+  --panel:#FFFFFF; --board:#16101A; --board-ink:#F7F2E8; --board-dim:#5E5566;
+  --amber:#FFB400;
+  --grad:linear-gradient(100deg,#FF0000 0%,#E0003A 45%,#B50080 100%);
+  --display:"Red Hat Display",Helvetica,Arial,sans-serif;
+  --text:"Red Hat Text",Helvetica,Arial,sans-serif;
+  --mono:"Red Hat Mono",ui-monospace,Menlo,Consolas,monospace;
+  --hud-h:58px;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#120A15; --bg-2:#1C1220; --ink:#F6F1F4; --ink-2:#B3A8B6; --line:#33263A;
+    --panel:#1A111E; --board:#0A060C; --board-dim:#4B4150;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#120A15; --bg-2:#1C1220; --ink:#F6F1F4; --ink-2:#B3A8B6; --line:#33263A;
+  --panel:#1A111E; --board:#0A060C; --board-dim:#4B4150;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--hud-h) + env(safe-area-inset-top,0px) + 12px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.skip{position:absolute;left:-999px;top:0}
+.skip:focus{left:12px;top:12px;z-index:100;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:8px}
+
+/* ---------- HUD ---------- */
+.hud{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;height:var(--hud-h);
+  background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line)}
+.hud .wrap{height:100%;display:flex;align-items:center;gap:22px}
+.brand{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;text-decoration:none;white-space:nowrap}
+.brand span{color:var(--red)}
+.hud-meta{display:flex;gap:22px;font-family:var(--mono);font-size:12.5px;color:var(--ink-2);margin-left:auto;align-items:center}
+.hud-meta b{color:var(--ink);font-weight:700}
+.hud-phase b{color:var(--red)}
+.hud button{font:inherit}
+.next-btn{font-family:var(--display)!important;font-weight:700;font-size:14px!important;border:0;border-radius:999px;padding:9px 16px;
+  background:var(--ink);color:var(--bg);cursor:pointer;white-space:nowrap}
+.next-btn:hover{background:var(--red);color:#fff}
+.theme-btn{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;width:36px;height:36px;cursor:pointer;display:grid;place-items:center}
+.progress{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--grad)}
+@media (max-width:820px){.hud-hide{display:none}.hud-meta{gap:14px}}
+.brand em{font-style:normal}
+@media (max-width:520px){.wrap{padding:0 18px}.hud .wrap{gap:10px}.hud-meta{gap:8px}.brand{font-size:16px}.b-pre{display:none}.next-btn{padding:8px 12px;font-size:13px!important}.hud-alt{display:none}}
+
+/* ---------- Altimeter rail ---------- */
+.rail{position:fixed;left:18px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:6px}
+.rail a{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
+.rail a i{width:10px;height:10px;border-radius:50%;border:2px solid var(--ink-2);display:block;transition:transform .2s,background .2s,border-color .2s}
+.rail a span{opacity:0;transform:translateX(-4px);transition:.2s}
+.rail a:hover span,.rail a:focus-visible span,.rail a.on span{opacity:1;transform:none}
+.rail a.on i{background:var(--red);border-color:var(--red);transform:scale(1.25)}
+.rail a.on{color:var(--ink)}
+@media (max-width:1320px){.rail{display:none}}
+
+/* ---------- Hero / departures board ---------- */
+.hero{padding:56px 0 72px;position:relative;overflow:hidden}
+.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(38px,5.2vw,72px);line-height:1;letter-spacing:-.035em;margin:34px 0 20px;max-width:19ch}
+.hero h1 .from{display:block;color:var(--ink-2);font-weight:500;font-size:.42em;letter-spacing:-.01em;margin-bottom:.35em}
+.hero .lede{font-size:clamp(17px,1.6vw,20px);color:var(--ink-2);max-width:60ch;margin:0 0 28px}
+.cta-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:16px;border-radius:999px;padding:14px 22px;text-decoration:none;border:0;cursor:pointer}
+.btn-primary{background:var(--grad);color:#fff}
+.btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink)}
+.status-note{font-size:14px;color:var(--ink-2);margin-top:18px}
+
+.board{background:var(--board);color:var(--board-ink);border-radius:18px;padding:22px 22px 18px;font-family:var(--mono);
+  box-shadow:0 30px 80px -40px rgba(181,0,128,.55);overflow-x:auto}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:14px;font-family:var(--display)}
+.board-head strong{font-size:18px;font-weight:800;letter-spacing:.02em}
+.board-head .clock{font-family:var(--mono);color:var(--amber);font-size:15px}
+.board table{border-collapse:separate;border-spacing:0 6px;width:100%;min-width:640px}
+.board th{font-family:var(--text);font-weight:500;font-size:12px;color:#9C93A2;text-align:left;padding:0 10px 4px 0}
+.board td{padding:0 10px 0 0;white-space:nowrap}
+.flap{display:inline-flex;gap:2px}
+.flap b{display:inline-block;width:.78em;height:1.42em;line-height:1.42em;text-align:center;background:#221A27;border-radius:3px;font-weight:700;font-size:16px;position:relative}
+.flap b::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:rgba(0,0,0,.55)}
+.flap.st-ok b{color:#5BE37D}.flap.st-plan b{color:var(--sky)}.flap.st-rev b{color:var(--amber)}.flap.st-tbd b{color:#B9AEC0}
+.board-foot{font-family:var(--text);font-size:12.5px;color:#9C93A2;margin-top:10px}
+
+/* ---------- Sections ---------- */
+section.leg{padding:96px 0;border-top:1px solid var(--line)}
+.leg-tag{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;color:var(--ink-2);margin-bottom:14px}
+.leg-tag .fl{background:var(--ink);color:var(--bg);border-radius:6px;padding:3px 8px;font-weight:700}
+h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,4vw,52px);line-height:1.04;letter-spacing:-.025em;margin:0 0 18px;max-width:22ch}
+h3{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.2;letter-spacing:-.01em;margin:0 0 8px}
+.intro{font-size:19px;color:var(--ink-2);max-width:64ch;margin:0 0 40px}
+p{margin:0 0 12px}
+.muted{color:var(--ink-2)}
+.small{font-size:14px}
+
+/* diagnóstico */
+.figs{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:2px solid var(--ink);border-bottom:1px solid var(--line);margin-bottom:56px}
+.fig{padding:22px 20px 22px 0}
+.fig + .fig{padding-left:20px;border-left:1px solid var(--line)}
+.fig .n{font-family:var(--display);font-weight:900;font-size:clamp(26px,2.8vw,38px);letter-spacing:-.03em;line-height:1}
+.fig .l{font-size:14px;color:var(--ink-2);margin-top:8px}
+@media (max-width:820px){.figs{grid-template-columns:1fr 1fr}.fig:nth-child(3){padding-left:0;border-left:0}.fig:nth-child(n+3){border-top:1px solid var(--line)}}
+
+.split{display:grid;grid-template-columns:1.25fr 1fr;gap:56px;align-items:start}
+@media (max-width:900px){.split{grid-template-columns:1fr;gap:36px}}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar{display:grid;grid-template-columns:190px 1fr 86px;gap:14px;align-items:center;font-size:14.5px}
+.bar .track{height:14px;background:var(--bg-2);border-radius:99px;overflow:hidden}
+.bar .fill{height:100%;width:0;background:var(--ink-2);border-radius:99px;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.bar.hot .fill{background:var(--grad)}
+.bar .v{font-family:var(--mono);font-size:13.5px;text-align:right}
+@media (max-width:560px){.bar{grid-template-columns:1fr 70px}.bar .track{grid-column:1/-1;grid-row:2}}
+.callout{background:var(--bg-2);border-radius:16px;padding:26px}
+.callout .big{font-family:var(--display);font-weight:900;font-size:64px;line-height:1;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sat{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:16px}
+.sat td{padding:7px 0;border-bottom:1px solid var(--line)}
+.sat td:last-child{text-align:right;font-family:var(--mono)}
+.gap-list{display:grid;grid-template-columns:1fr 1fr;gap:10px 40px;padding:0;margin:20px 0 0;list-style:none}
+.gap-list li{padding-left:22px;position:relative}
+.gap-list li::before{content:"";position:absolute;left:0;top:.62em;width:10px;height:2px;background:var(--red)}
+@media (max-width:700px){.gap-list{grid-template-columns:1fr}}
+.verdict{margin-top:56px;font-family:var(--display);font-weight:800;font-size:clamp(24px,2.8vw,34px);line-height:1.15;letter-spacing:-.02em;max-width:30ch}
+
+/* problemas */
+.probs{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:p}
+.prob{border-top:4px solid var(--ink);padding-top:20px}
+.prob .num{font-family:var(--display);font-weight:900;font-size:56px;line-height:1;color:var(--red);margin-bottom:12px}
+.prob dl{margin:16px 0 0}
+.prob dt{font-weight:700;font-size:13.5px;color:var(--red);margin-top:12px}
+.prob dd{margin:2px 0 0;font-size:15.5px}
+@media (max-width:900px){.probs{grid-template-columns:1fr}}
+
+/* hipótesis switch */
+.hypo{font-family:var(--display);font-weight:700;font-size:clamp(22px,2.4vw,30px);line-height:1.25;letter-spacing:-.015em;max-width:40ch;margin:0 0 40px}
+.switch{display:inline-flex;background:var(--bg-2);border-radius:999px;padding:5px;margin-bottom:22px}
+.switch button{border:0;background:transparent;color:var(--ink-2);font-family:var(--display);font-weight:700;font-size:15px;padding:10px 20px;border-radius:999px;cursor:pointer}
+.switch button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.shift{display:grid;gap:0;border-top:1px solid var(--line)}
+.shift-row{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:18px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.shift-row .k{font-weight:700;font-size:14px;color:var(--ink-2)}
+.shift-row .v{font-size:19px;transition:opacity .25s}
+.shift[data-year="2027"] .shift-row .v{color:var(--ink)}
+.shift[data-year="2026"] .shift-row .v{color:var(--ink-2)}
+@media (max-width:640px){.shift-row{grid-template-columns:1fr;gap:4px}}
+.keep{margin-top:30px;font-size:15.5px;color:var(--ink-2)}
+
+/* segmentos */
+.segs{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.seg{border-radius:18px;padding:26px;background:var(--bg-2);position:relative}
+.seg .alt{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.seg h3{margin-top:6px}
+.seg.plus{background:var(--grad);color:#fff}
+.seg.plus .alt,.seg.plus .muted{color:rgba(255,255,255,.82)}
+.seg dl{margin:16px 0 0}
+.seg dt{font-weight:700;font-size:13px;margin-top:12px;opacity:.85}
+.seg dd{margin:2px 0 0;font-size:15.5px}
+@media (max-width:900px){.segs{grid-template-columns:1fr}}
+
+/* iniciativas tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.tabs button{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:10px 18px;font-family:var(--display);font-weight:700;font-size:15px;cursor:pointer;text-align:left}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tabs button small{font-family:var(--mono);font-weight:500;opacity:.7;margin-right:6px}
+.panel{display:none}
+.panel.on{display:block}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:26px 0 30px;counter-reset:s}
+.steps.four{grid-template-columns:repeat(4,1fr)}
+.step{padding:0 18px 0 0;position:relative}
+.step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--red);color:#fff;font-family:var(--display);font-weight:800;margin-bottom:12px;position:relative;z-index:1}
+.step::after{content:"";position:absolute;top:17px;left:34px;right:0;height:2px;background:var(--line)}
+.step:last-child::after{display:none}
+.step b{display:block;font-family:var(--display);font-size:17px;margin-bottom:4px}
+.step p{font-size:14.5px;color:var(--ink-2)}
+@media (max-width:900px){.steps,.steps.four{grid-template-columns:1fr;gap:16px}.step::after{display:none}.step{display:grid;grid-template-columns:46px 1fr;padding:0}.step::before{grid-row:span 2;margin:0}}
+.trio{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.trio > div{background:var(--bg-2);border-radius:16px;padding:22px}
+.trio h4{font-family:var(--display);font-size:17px;margin:0 0 8px;color:var(--red)}
+.trio ul{margin:0;padding-left:18px;font-size:15px}
+.trio p{font-size:15px}
+@media (max-width:900px){.trio{grid-template-columns:1fr}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.chip{border:1.5px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:500}
+.lab-stats{display:flex;flex-wrap:wrap;gap:34px;margin:6px 0 4px}
+.lab-stats div{font-family:var(--display);font-weight:900;font-size:34px;letter-spacing:-.02em;line-height:1}
+.lab-stats small{display:block;font-family:var(--text);font-weight:500;font-size:13.5px;color:var(--ink-2);margin-top:6px;letter-spacing:0}
+
+/* IA layer */
+.ia{background:var(--board);color:var(--board-ink);border-radius:28px;padding:56px;position:relative;overflow:hidden}
+.ia h2{color:#fff}
+.ia .intro{color:#C9BECC}
+.ia-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;position:relative;z-index:1}
+.ia-grid h3{color:#fff;font-size:19px}
+.ia-grid p{color:#C9BECC;font-size:15.5px}
+.ia-grid .tag{font-family:var(--mono);font-size:12px;color:var(--amber);display:block;margin-bottom:8px}
+.radar{position:absolute;right:-140px;top:-140px;width:460px;height:460px;border-radius:50%;
+  background:repeating-radial-gradient(circle,rgba(255,255,255,.07) 0 1px,transparent 1px 46px);pointer-events:none}
+.radar::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,rgba(255,0,0,.35),transparent 70deg);animation:sweep 6s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.radar::after{animation:none}}
+@media (max-width:900px){.ia{padding:34px 24px}.ia-grid{grid-template-columns:1fr}}
+
+/* simulador */
+.sim{display:grid;grid-template-columns:360px 1fr;gap:40px;align-items:start}
+@media (max-width:980px){.sim{grid-template-columns:1fr}}
+.field{margin-bottom:22px}
+.field label,.field legend{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
+.field fieldset{border:0;padding:0;margin:0}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts input{position:absolute;opacity:0;pointer-events:none}
+.opts label{margin:0;font-weight:500;font-size:14.5px;border:1.5px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
+.opts input:checked + label{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.opts input:focus-visible + label{outline:3px solid var(--blue);outline-offset:2px}
+select{width:100%;font:inherit;font-size:15px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--panel);color:var(--ink)}
+
+.pass{display:grid;grid-template-columns:1fr 210px;border-radius:22px;overflow:hidden;background:var(--panel);
+  box-shadow:0 24px 60px -30px rgba(20,10,30,.45);border:1px solid var(--line);position:relative}
+.pass-main{padding:28px 30px}
+.pass-top{display:flex;justify-content:space-between;align-items:center;margin:-28px -30px 22px;padding:16px 30px;background:var(--grad);color:#fff}
+.pass-top strong{font-family:var(--display);font-weight:800;font-size:18px}
+.pass-top span{font-family:var(--mono);font-size:13px}
+.route{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-bottom:22px}
+.route .code{font-family:var(--display);font-weight:900;font-size:clamp(28px,3vw,40px);letter-spacing:-.02em;line-height:1}
+.route .sub{font-size:13.5px;color:var(--ink-2);margin-top:6px}
+.route .plane{width:54px;height:54px;color:var(--red)}
+.route > div:last-child{text-align:right}
+.pass-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 26px}
+.pass-grid .k{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.pass-grid .v{font-size:15.5px;font-weight:500}
+.pass-grid .wide{grid-column:1/-1}
+.stub{border-left:2px dashed var(--line);padding:24px 22px;display:flex;flex-direction:column;gap:14px;background:var(--bg-2)}
+.stub .k{font-size:12px;color:var(--ink-2)}
+.stub .v{font-family:var(--display);font-weight:800;font-size:22px;line-height:1.1}
+.barcode{margin-top:auto;height:56px;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 8px,var(--ink) 8px 11px,transparent 11px 12px)}
+.pass.print-in{animation:printin .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes printin{from{transform:translateY(10px);opacity:.3}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.pass.print-in{animation:none}}
+@media (max-width:640px){.pass{grid-template-columns:1fr}.stub{border-left:0;border-top:2px dashed var(--line)}.pass-grid{grid-template-columns:1fr}}
+.warn{margin-top:16px;padding:14px 16px;border-radius:12px;background:color-mix(in srgb,var(--amber) 18%,transparent);font-size:14.5px;display:none}
+.warn.on{display:block}
+.sim-note{font-size:13.5px;color:var(--ink-2);margin-top:14px}
+
+/* torre de control */
+.tower{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.tower > div{background:var(--bg);padding:22px}
+.tower .who{font-family:var(--display);font-weight:800;font-size:18px;margin-bottom:6px}
+.tower .does{font-size:14.5px}
+.tower .not{font-size:13.5px;color:var(--red);margin-top:10px}
+.tower .core{background:var(--board);color:var(--board-ink)}
+.tower .core .not{color:var(--amber)}
+@media (max-width:900px){.tower{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.tower{grid-template-columns:1fr}}
+
+/* mantener */
+.mtd{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.mtd h3{display:flex;align-items:center;gap:10px}
+.mtd h3 i{width:14px;height:14px;border-radius:50%;display:inline-block}
+.mtd ul{list-style:none;padding:0;margin:14px 0 0}
+.mtd li{padding:12px 0;border-top:1px solid var(--line)}
+.mtd li b{display:block;font-size:16px}
+.mtd li span{font-size:14.5px;color:var(--ink-2)}
+@media (max-width:900px){.mtd{grid-template-columns:1fr}}
+
+/* riesgos */
+.risks{width:100%;border-collapse:collapse;font-size:15px}
+.risks th{text-align:left;font-size:13px;color:var(--ink-2);font-weight:700;padding:0 16px 10px 0;border-bottom:2px solid var(--ink)}
+.risks td{padding:14px 16px 14px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.risks td:first-child{font-weight:700;width:34%}
+.table-scroll{overflow-x:auto}
+.risks{min-width:640px}
+
+/* decisiones */
+.decisions{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:14px;counter-reset:d}
+.decisions li{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;background:var(--bg-2);border-radius:16px;padding:20px 22px}
+.decisions li::before{counter-increment:d;content:counter(d);font-family:var(--display);font-weight:900;font-size:30px;color:var(--red);line-height:1}
+.decisions b{display:block;font-family:var(--display);font-size:18px;margin-bottom:4px}
+.decisions p{font-size:15px;color:var(--ink-2);margin:0}
+.decisions input{width:22px;height:22px;accent-color:var(--red);cursor:pointer;margin-top:4px}
+@media (max-width:800px){.decisions{grid-template-columns:1fr}}
+.dec-count{font-family:var(--mono);font-size:14px;color:var(--ink-2);margin-top:14px}
+
+/* roadmap */
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;position:relative;margin-top:10px}
+.timeline::before{content:"";position:absolute;left:0;right:0;top:46px;height:2px;background:var(--line)}
+.tl{padding-right:18px;position:relative}
+.tl .when{font-family:var(--mono);font-size:13px;color:var(--ink-2);height:30px}
+.tl .dot{width:18px;height:18px;border-radius:50%;background:var(--bg);border:3px solid var(--ink-2);position:relative;z-index:1;margin:8px 0 18px}
+.tl.key .dot{border-color:var(--red);background:var(--red)}
+.tl.key .when{color:var(--red);font-weight:700}
+.tl b{display:block;font-family:var(--display);font-size:18px;margin-bottom:4px}
+.tl p{font-size:14.5px;color:var(--ink-2)}
+@media (max-width:900px){.timeline{grid-template-columns:1fr;gap:18px}.timeline::before{display:none}.tl .dot{display:none}.tl .when{height:auto}}
+.criteria{margin-top:40px;border:2px solid var(--red);border-radius:18px;padding:26px}
+.criteria ul{margin:10px 0 0;padding-left:20px;columns:2;column-gap:40px}
+.criteria li{margin-bottom:8px;break-inside:avoid}
+@media (max-width:760px){.criteria ul{columns:1}}
+
+footer{padding:56px 0 80px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-2)}
+footer h3{font-size:17px;color:var(--ink)}
+footer ul{padding-left:18px;margin:8px 0 0}
+footer li{margin-bottom:6px}
+.foot-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:48px}
+@media (max-width:800px){.foot-grid{grid-template-columns:1fr}}
+
+/* ===== interactividad v2 ===== */
+.hud-tools{display:flex;gap:8px;align-items:center}
+.tool-btn{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;height:36px;padding:0 12px;cursor:pointer;font-family:var(--display);font-weight:700;font-size:13px;white-space:nowrap}
+.tool-btn:hover{border-color:var(--ink)}
+.tool-btn[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+@media (max-width:820px){.tool-btn.opt{display:none}}
+.board tbody tr{cursor:pointer;transition:background .15s}
+.board tbody tr:hover,.board tbody tr:focus-visible{background:rgba(255,255,255,.06);outline:none}
+.board tbody tr:focus-visible .flap b{box-shadow:0 0 0 1px var(--amber)}
+.board-hint{font-family:var(--text);font-size:12.5px;color:var(--amber);margin-left:auto}
+
+/* guess */
+.guess{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center;background:var(--bg-2);border-radius:22px;padding:32px;margin-bottom:56px}
+.guess h3{font-size:24px}
+.guess input[type=range]{width:100%;accent-color:var(--red);height:28px}
+.guess .gv{font-family:var(--display);font-weight:900;font-size:56px;letter-spacing:-.03em;line-height:1}
+.gauge{position:relative;height:26px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:14px}
+.gauge .g-real{position:absolute;inset:0 auto 0 0;width:0;background:var(--grad);transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.gauge .g-you{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--ink);left:50%}
+.guess-result{min-height:52px;margin-top:12px;font-size:16px}
+@media (max-width:820px){.guess{grid-template-columns:1fr;padding:24px}}
+
+/* bar views */
+.seg-ctrl{display:inline-flex;background:var(--bg-2);border-radius:999px;padding:4px;margin:6px 0 18px;flex-wrap:wrap}
+.seg-ctrl button{border:0;background:transparent;color:var(--ink-2);font-family:var(--display);font-weight:700;font-size:14px;padding:8px 14px;border-radius:999px;cursor:pointer}
+.seg-ctrl button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.bar-read{font-size:15px;margin-top:16px;min-height:48px;padding:14px 16px;border-radius:12px;background:var(--bg-2)}
+
+/* flip cards */
+.flip{perspective:1400px;min-height:430px}
+.flip-inner{position:relative;width:100%;height:100%;min-height:430px;transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.flip.on .flip-inner{transform:rotateY(180deg)}
+.flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;padding:28px;display:flex;flex-direction:column}
+.flip-front{background:var(--bg-2)}
+.flip-back{background:var(--board);color:var(--board-ink);transform:rotateY(180deg)}
+.flip-back dt{color:var(--amber)!important}
+.flip .num{font-family:var(--display);font-weight:900;font-size:72px;line-height:1;color:var(--red);margin-bottom:auto}
+.flip h3{font-size:24px}
+.flip button.turn{margin-top:18px;align-self:flex-start;border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:999px;padding:9px 16px;font-family:var(--display);font-weight:700;cursor:pointer}
+.flip dl{margin:0}.flip dt{font-weight:700;font-size:13.5px;margin-top:10px}.flip dd{margin:2px 0 0;font-size:15.5px}
+@media (prefers-reduced-motion:reduce){.flip-inner{transition:none}}
+@media (max-width:900px){.flip,.flip-inner{min-height:380px}}
+
+/* stepper interactivo */
+.stepper{position:relative;margin:30px 0 8px}
+.stepper-track{position:relative;height:4px;background:var(--line);border-radius:4px;margin:0 17px 0 17px}
+.stepper-fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--grad);border-radius:4px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.stepper-plane{position:absolute;top:50%;width:30px;height:30px;color:var(--red);transform:translate(-50%,-50%);transition:left .5s cubic-bezier(.2,.8,.2,1);left:0}
+.stepper-btns{display:grid;grid-template-columns:repeat(5,1fr);margin-top:16px}
+.stepper-btns button{background:none;border:0;color:var(--ink-2);text-align:left;padding:6px 8px 6px 0;cursor:pointer;font-family:var(--display);font-weight:700;font-size:16px}
+.stepper-btns button[aria-selected="true"]{color:var(--ink)}
+.stepper-btns button small{display:block;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink-2)}
+.step-detail{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:24px;background:var(--bg-2);border-radius:18px;padding:24px;margin:16px 0 30px}
+.step-detail .k{font-size:12.5px;color:var(--ink-2);font-weight:700}
+.step-detail .v{font-size:16px}
+.step-detail .v.big{font-family:var(--display);font-weight:700;font-size:20px;line-height:1.3}
+@media (max-width:800px){.stepper-btns button{font-size:13px}.step-detail{grid-template-columns:1fr}}
+
+/* RACI */
+.raci-wrap{overflow-x:auto}
+.raci{border-collapse:separate;border-spacing:4px;width:100%;min-width:760px}
+.raci th{font-size:13px;text-align:left;color:var(--ink-2);font-weight:700;padding:6px 8px}
+.raci th[scope=row]{color:var(--ink);font-family:var(--display);font-size:15px;white-space:nowrap}
+.raci th[scope=row] button{all:unset;cursor:pointer;display:block;padding:4px 0}
+.raci th[scope=row] button:focus-visible{outline:3px solid var(--blue)}
+.raci td{height:46px;border-radius:10px;background:var(--bg-2);text-align:center;font-size:13px;font-weight:700;transition:opacity .2s,transform .2s}
+.raci td.L{background:var(--grad);color:#fff}
+.raci td.P{background:color-mix(in srgb,var(--blue) 22%,var(--bg-2));color:var(--ink)}
+.raci.focus tr:not(.hl) td,.raci.focus tr:not(.hl) th[scope=row]{opacity:.25}
+.raci.focus tr.hl td{transform:scale(1.03)}
+.raci-legend{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;margin:14px 0 6px;align-items:center}
+.raci-legend i{display:inline-block;width:16px;height:16px;border-radius:5px;vertical-align:-3px;margin-right:6px}
+.role-card{margin-top:18px;min-height:96px;border-radius:16px;padding:20px 22px;background:var(--board);color:var(--board-ink)}
+.role-card b{font-family:var(--display);font-size:19px;display:block;margin-bottom:4px}
+.role-card .not{color:var(--amber);font-size:14.5px;margin-top:6px}
+.load{display:flex;align-items:center;gap:16px;margin-top:22px;flex-wrap:wrap}
+.load-meter{display:flex;gap:5px}
+.load-meter span{width:34px;height:12px;border-radius:4px;background:var(--line)}
+.load-meter span.on{background:var(--red)}
+
+/* juego clasificar */
+.sort-pool{display:flex;flex-wrap:wrap;gap:10px;min-height:56px;padding:16px;border:2px dashed var(--line);border-radius:18px;margin:20px 0}
+.card-chip{border:1.5px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:10px 14px;font-family:var(--display);font-weight:700;font-size:15px;cursor:grab;user-select:none;touch-action:none}
+.card-chip[aria-pressed="true"]{border-color:var(--red);box-shadow:0 0 0 3px color-mix(in srgb,var(--red) 30%,transparent)}
+.card-chip.ok{border-color:#23C847}
+.card-chip.no{border-color:var(--amber)}
+.card-chip.dragging{opacity:.4}
+.buckets{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.bucket{border-radius:18px;background:var(--bg-2);padding:18px;min-height:220px;display:flex;flex-direction:column;gap:8px;transition:outline-color .15s;outline:3px solid transparent;outline-offset:-3px}
+.bucket.over{outline-color:var(--red)}
+.bucket > button.bk-head{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:19px;padding:4px 0 8px}
+.bucket > button.bk-head:focus-visible{outline:3px solid var(--blue)}
+.bucket > button.bk-head i{width:14px;height:14px;border-radius:50%}
+.bucket .card-chip{cursor:pointer;width:100%;text-align:left}
+.bucket .why{font-family:var(--text);font-weight:500;font-size:13.5px;color:var(--ink-2);display:none;margin-top:4px}
+.revealed .bucket .why{display:block}
+.sort-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px}
+.score{font-family:var(--display);font-weight:800;font-size:20px}
+@media (max-width:860px){.buckets{grid-template-columns:1fr}.bucket{min-height:120px}}
+
+/* annunciator */
+.annun{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;background:var(--board);padding:16px;border-radius:20px}
+.annun button{border:0;border-radius:10px;padding:16px 12px;min-height:84px;font-family:var(--mono);font-weight:700;font-size:12.5px;letter-spacing:.02em;cursor:pointer;background:#2A2030;color:#8F8496;text-align:center;line-height:1.3;transition:background .2s,color .2s,box-shadow .2s}
+.annun button.lit{background:#3A2A0A;color:var(--amber);box-shadow:inset 0 0 0 1px rgba(255,180,0,.4),0 0 18px -6px rgba(255,180,0,.6);animation:blink 1.4s ease-in-out infinite}
+.annun button.seen{background:#0F2A17;color:#5BE37D;box-shadow:inset 0 0 0 1px rgba(91,227,125,.35);animation:none}
+.annun button[aria-pressed="true"]{outline:2px solid #fff;outline-offset:2px}
+@keyframes blink{50%{box-shadow:inset 0 0 0 1px rgba(255,180,0,.2),0 0 4px -6px rgba(255,180,0,.2)}}
+@media (prefers-reduced-motion:reduce){.annun button.lit{animation:none}}
+.annun-detail{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px;border-radius:18px;padding:24px;background:var(--bg-2);min-height:120px}
+.annun-detail .k{font-size:12.5px;font-weight:700;color:var(--ink-2)}
+.annun-detail h4{grid-column:1/-1;margin:0;font-family:var(--display);font-size:21px}
+.annun-status{font-family:var(--mono);font-size:14px;margin-top:12px;color:var(--ink-2)}
+@media (max-width:820px){.annun{grid-template-columns:1fr 1fr}.annun-detail{grid-template-columns:1fr}}
+
+/* timeline slider */
+.month-ctrl{margin-top:26px}
+.month-ctrl input{width:100%;accent-color:var(--red)}
+.month-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--ink-2);margin-top:4px}
+.month-card{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;margin-top:18px;border-radius:18px;padding:22px;background:var(--bg-2)}
+.month-card .m{font-family:var(--display);font-weight:900;font-size:40px;line-height:1;letter-spacing:-.02em;color:var(--red);min-width:170px}
+.month-card .ph{font-family:var(--display);font-weight:800;font-size:20px}
+.tl.active .dot{transform:scale(1.35)}
+.tl.active b{color:var(--red)}
+@media (max-width:640px){.month-card{grid-template-columns:1fr}.month-card .m{min-width:0}}
+
+/* despegue overlay */
+.takeoff{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:color-mix(in srgb,var(--board) 88%,transparent);backdrop-filter:blur(8px);color:#fff;text-align:center;padding:24px}
+.takeoff.on{display:grid}
+.takeoff .runway{position:relative;width:min(640px,90vw);height:160px;margin:0 auto 18px}
+.takeoff .runway::before{content:"";position:absolute;left:0;right:0;bottom:24px;height:4px;background:repeating-linear-gradient(90deg,#fff 0 28px,transparent 28px 48px);opacity:.5}
+.takeoff svg{position:absolute;left:0;bottom:24px;width:64px;height:64px;color:var(--red);animation:fly 2.4s cubic-bezier(.5,0,.2,1) forwards}
+@keyframes fly{0%{transform:translate(0,0) rotate(0)}55%{transform:translate(55%,0) rotate(0)}100%{transform:translate(min(580px,82vw),-130px) rotate(-18deg)}}
+@media (prefers-reduced-motion:reduce){.takeoff svg{animation:none;left:auto;right:0}}
+.takeoff h3{font-size:clamp(28px,4vw,46px);font-weight:900;color:#fff}
+.takeoff p{color:#C9BECC;max-width:52ch;margin:0 auto 20px}
+
+/* modo presentación */
+html.present{scroll-snap-type:y mandatory}
+html.present main > section{min-height:calc(100vh - var(--hud-h));scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center}
+html.present footer{scroll-snap-align:start}
+.present-hint{position:fixed;right:18px;bottom:18px;z-index:55;background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 14px;font-size:13px;display:none}
+html.present .present-hint{display:block}
+
+/* print */
+@media print{.hud,.rail,.cta-row,.next-btn,.guess,.annun,.month-ctrl,.sort-bar,.present-hint{display:none!important}.flip-inner{transform:none!important}.flip-back{position:relative;transform:none}.flip-front{display:none}.radar{display:none}section.leg{padding:36px 0;break-inside:avoid-page}.panel{display:block!important;margin-bottom:24px}.tabs{display:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#pista">Saltar al contenido</a>
+
+<header class="hud" role="banner">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Volver al inicio"><em class="b-pre">avianca <span>·</span> </em>Talent Hub 2027</a>
+    <div class="hud-meta" aria-live="polite">
+      <span class="hud-alt">Altitud <b id="alt">FL000</b></span>
+      <span class="hud-phase hud-hide">Tramo <b id="phase">Embarque</b></span>
+      <span class="hud-tools">
+        <button class="tool-btn opt" id="presentBtn" type="button" aria-pressed="false" title="Modo presentación (tecla P)">Presentar</button>
+        <button class="tool-btn opt" id="printBtn" type="button" title="Guardar la propuesta en PDF">PDF</button>
+      </span>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Cambiar entre modo claro y oscuro" title="Modo claro u oscuro">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="next-btn" id="nextBtn" type="button">Siguiente tramo</button>
+    </div>
+  </div>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+</header>
+
+<nav class="rail" aria-label="Tramos del plan de vuelo" id="rail"></nav>
+
+<main id="top">
+<!-- ================= HERO ================= -->
+<section class="hero" data-phase="Embarque" data-fl="0">
+  <div class="wrap">
+    <div class="board" role="region" aria-label="Tablero de salidas Talent Hub 2027">
+      <div class="board-head"><strong>Salidas · Talent Hub 2027</strong><span class="board-hint">Toca un vuelo para ver su ruta</span><span class="clock" id="clock">--:--</span></div>
+      <table>
+        <thead><tr><th scope="col">Vuelo</th><th scope="col">Destino</th><th scope="col">Duración</th><th scope="col">Estado</th></tr></thead>
+        <tbody id="boardBody"></tbody>
+      </table>
+      <div class="board-foot">Estados de una propuesta en discusión. Nada de lo listado está aprobado.</div>
+    </div>
+
+    <h1><span class="from">Propuesta de evolución de Talent Hub</span>De un calendario de actividades a una cartera de desafíos del negocio</h1>
+    <p class="lede">En 2027 el proyecto pasa a ser la unidad de desarrollo. Los colaboradores aplican sus capacidades en desafíos reales con dueño en el negocio, y la formación se contrata para servir a esos desafíos.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#pista">Iniciar el recorrido</a>
+      <a class="btn btn-ghost" href="#simulador">Probar el simulador de ruta</a>
+    </div>
+    <p class="status-note">Documento de trabajo de la Dirección de Talento · noviembre 2026</p>
+  </div>
+</section>
+
+<!-- ================= PISTA: DIAGNÓSTICO ================= -->
+<section class="leg" id="pista" data-phase="Pista" data-fl="20" data-label="Diagnóstico">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL020</span> Pista · diagnóstico</div>
+    <h2>2025 dejó una base sólida. También mostró dónde no estamos midiendo.</h2>
+    <p class="intro">Resultados del informe Talent Hub 2025. Los resultados de ejecución 2026 no están en los documentos revisados.</p>
+
+    <div class="guess" id="guess">
+      <div>
+        <h3>Antes de ver los datos: ¿qué parte de la inversión 2025 se fue a un solo proveedor?</h3>
+        <label for="guessRange" class="muted small">Mueve el control y confirma tu estimación</label>
+        <input type="range" id="guessRange" min="0" max="100" value="40" step="1">
+        <div class="cta-row"><button class="btn btn-primary" type="button" id="guessBtn">Confirmar estimación</button></div>
+      </div>
+      <div>
+        <div class="gv" id="guessVal">40 %</div>
+        <div class="gauge" aria-hidden="true"><div class="g-real" id="gReal"></div><div class="g-you" id="gYou"></div></div>
+        <div class="guess-result" id="guessResult" role="status"></div>
+      </div>
+    </div>
+
+    <div class="figs">
+      <div class="fig"><div class="n">443 → 411</div><div class="l">Población al inicio y al cierre de 2025</div></div>
+      <div class="fig"><div class="n">231 h</div><div class="l">Horas de inversión de aprendizaje</div></div>
+      <div class="fig"><div class="n">USD 176.478</div><div class="l">Inversión total registrada</div></div>
+      <div class="fig"><div class="n">4,6 / 5</div><div class="l">Satisfacción general (muestra del 15 %)</div></div>
+    </div>
+
+    <div class="split">
+      <div>
+        <h3 id="barsTitle">Costo total por iniciativa, USD</h3>
+        <div class="seg-ctrl" role="group" aria-label="Cambiar la vista de las barras">
+          <button type="button" data-view="cost" aria-pressed="true">Costo</button>
+          <button type="button" data-view="sat" aria-pressed="false">Satisfacción</button>
+          <button type="button" data-view="part" aria-pressed="false">Participación</button>
+        </div>
+        <div class="bars" id="bars"></div>
+        <p class="bar-read" id="barRead" role="status"></p>
+      </div>
+      <div class="callout">
+        <div class="big">75 %</div>
+        <p><strong>de la inversión registrada fue a INALDE</strong>: USD 131.578 de 176.478.</p>
+        <p class="muted small">Y la satisfacción ya no ayuda a decidir: todos los formatos están entre 4,5 y 5,0.</p>
+        <table class="sat" aria-label="Satisfacción por formato">
+          <tr><td>Viajes de aprendizaje</td><td>5,0</td></tr>
+          <tr><td>INALDE</td><td>4,9</td></tr>
+          <tr><td>Laboratorios prácticos (costo directo 0)</td><td>4,9</td></tr>
+          <tr><td>Masterclass invertidas (costo directo 0)</td><td>4,9</td></tr>
+          <tr><td>Future Lead (NAT 1 / NAT 2)</td><td>4,7 / 5,0</td></tr>
+          <tr><td>Presencia Ejecutiva</td><td>4,6</td></tr>
+          <tr><td>Masterclass Los Andes</td><td>4,53</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div style="margin-top:56px">
+      <h3>El diseño 2026 ya incluye proyectos en Talent Hub Plus. Lo que todavía no está definido es su mecanismo:</h3>
+      <ul class="gap-list">
+        <li>Quién propone los desafíos y con qué criterio se priorizan.</li>
+        <li>Qué entrega el proyecto y quién evalúa su resultado.</li>
+        <li>Qué compromiso asume el sponsor y cuánto tiempo dedica.</li>
+        <li>Cómo la prueba de potencial orienta la experiencia asignada.</li>
+        <li>Cómo se asigna a cada persona a un proyecto.</li>
+        <li>Qué parte de la operación sale de la administración del programa.</li>
+      </ul>
+    </div>
+    <p class="verdict">Tenemos evidencia de satisfacción, no de resultado. Ese es el primer vacío que debe cerrar 2027.</p>
+  </div>
+</section>
+
+<!-- ================= DESPEGUE: PROBLEMAS ================= -->
+<section class="leg" id="despegue" data-phase="Despegue" data-fl="80" data-label="Problemas">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL080</span> Despegue · tres problemas por resolver</div>
+    <h2>Sumar más cursos o eventos no resolvería ninguno de estos tres problemas</h2>
+    <p class="intro">Toca cada problema para ver la evidencia y la consecuencia.</p>
+    <div class="probs">
+      <div class="flip" data-flip><div class="flip-inner">
+        <div class="flip-face flip-front"><div class="num">1</div><h3>Medimos participación y satisfacción, no lo que cambia en el negocio</h3><button class="turn" type="button" aria-expanded="false">Ver evidencia</button></div>
+        <div class="flip-face flip-back" aria-hidden="true"><dl><dt>Evidencia</dt><dd>La aplicación se conoce por autorreporte. Solo el laboratorio dejó una decisión documentada: el cierre del hangar y la adecuación de la malla.</dd><dt>Consecuencia</dt><dd>No podemos mostrar qué obtuvo avianca de la inversión, ni decidir con datos qué formato mantener.</dd></dl><button class="turn" type="button" tabindex="-1">Volver</button></div>
+      </div></div>
+      <div class="flip" data-flip><div class="flip-inner">
+        <div class="flip-face flip-front"><div class="num">2</div><h3>La inversión está en el aula; el valor percibido, en la práctica</h3><button class="turn" type="button" aria-expanded="false">Ver evidencia</button></div>
+        <div class="flip-face flip-back" aria-hidden="true"><dl><dt>Evidencia</dt><dd>Lo más valorado son casos reales (15,4 %), benchmark y presencialidad. Los laboratorios costaron cero, pero llegaron a 32 personas.</dd><dt>Consecuencia</dt><dd>Más horas de formación aumentan el costo sin cambiar lo que la gente hace en su rol. LinkedIn Learning ya cubre el contenido.</dd></dl><button class="turn" type="button" tabindex="-1">Volver</button></div>
+      </div></div>
+      <div class="flip" data-flip><div class="flip-inner">
+        <div class="flip-face flip-front"><div class="num">3</div><h3>El acceso a experiencias no responde a la brecha de cada persona</h3><button class="turn" type="button" aria-expanded="false">Ver evidencia</button></div>
+        <div class="flip-face flip-back" aria-hidden="true"><dl><dt>Evidencia</dt><dd>La prueba de potencial se usa como diagnóstico. Los proyectos están solo en Plus. Toda la coordinación recae en una persona.</dd><dt>Consecuencia</dt><dd>Si los proyectos crecen sin cambiar el modelo operativo, el programa se vuelve inmanejable o se queda en piloto permanente.</dd></dl><button class="turn" type="button" tabindex="-1">Volver</button></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ASCENSO: HIPÓTESIS ================= -->
+<section class="leg" id="ascenso" data-phase="Ascenso" data-fl="180" data-label="Propuesta">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL180</span> Ascenso · hipótesis 2027</div>
+    <h2>El proyecto pasa a ser la unidad de desarrollo</h2>
+    <p class="hypo">Si el desarrollo ocurre dentro de desafíos reales con dueño en el negocio, avianca obtiene recomendaciones accionables sobre sus Must Wins y los colaboradores ganan evidencia observable de sus capacidades.</p>
+
+    <div class="switch" role="group" aria-label="Comparar el modelo actual con la propuesta">
+      <button type="button" data-year="2026" aria-pressed="false">Hoy, 2025–2026</button>
+      <button type="button" data-year="2027" aria-pressed="true">Propuesta 2027</button>
+    </div>
+    <div class="shift" id="shift" data-year="2027" aria-live="polite"></div>
+    <p class="keep"><strong>Qué no cambia:</strong> la promesa de valor, los tres segmentos, el Modelo de Contribución como marco y LinkedIn Learning como base de contenidos digitales.</p>
+
+    <div style="margin-top:64px">
+      <h3 style="font-size:26px;margin-bottom:22px">Profundidad distinta según segmento</h3>
+      <div class="segs">
+        <article class="seg plus">
+          <div class="alt">Altitud alta</div>
+          <h3>Talent Hub Plus</h3>
+          <dl><dt>Experiencia</dt><dd>Proyecto estratégico en equipo interdisciplinario, con sponsor de primer nivel.</dd>
+          <dt>Duración</dt><dd>16 semanas, con dedicación por acordar con los VP.</dd>
+          <dt>Acompañamiento</dt><dd>Formación ejecutiva aplicada, feedback del sponsor y acompañamiento individual.</dd>
+          <dt>Alcance</dt><dd>Cupos limitados por el número de desafíos aprobados.</dd></dl>
+        </article>
+        <article class="seg">
+          <div class="alt">Altitud media</div>
+          <h3>Talent Hub</h3>
+          <dl><dt>Experiencia</dt><dd>Laboratorios de reto sobre problemas de un área y ruta de LinkedIn Learning según brecha.</dd>
+          <dt>Duración</dt><dd>Una jornada presencial y cuatro semanas de prueba en el área.</dd>
+          <dt>Acompañamiento</dt><dd>Grupal, con el líder del área dueño del problema.</dd>
+          <dt>Alcance</dt><dd>La mayor parte de la población del programa.</dd></dl>
+        </article>
+        <article class="seg">
+          <div class="alt">Por definir</div>
+          <h3>Talent Hub Expert</h3>
+          <dl><dt>Experiencia</dt><dd>Rol de asesor técnico en proyectos y laboratorios; masterclass invertidas.</dd>
+          <dt>Duración</dt><dd>Según la demanda técnica de cada desafío.</dd>
+          <dt>Acompañamiento</dt><dd>Reconocimiento del rol experto, sin acompañamiento individual.</dd>
+          <dt>Alcance</dt><dd>Definición del segmento pendiente de validar.</dd></dl>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CRUCERO: INICIATIVAS ================= -->
+<section class="leg" id="crucero" data-phase="Crucero" data-fl="350" data-label="Iniciativas">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL350</span> Crucero · cuatro iniciativas</div>
+    <h2>Pocas iniciativas, con dueño y con mecanismo</h2>
+    <p class="intro">Ninguna se suma al calendario actual: reemplazan formatos que hoy consumen tiempo y presupuesto.</p>
+
+    <div class="tabs" role="tablist" aria-label="Iniciativas">
+      <button role="tab" id="t1" aria-controls="p1" aria-selected="true"><small>1</small>Cartera de desafíos</button>
+      <button role="tab" id="t2" aria-controls="p2" aria-selected="false" tabindex="-1"><small>2</small>Laboratorios de reto</button>
+      <button role="tab" id="t3" aria-controls="p3" aria-selected="false" tabindex="-1"><small>3</small>Formación ejecutiva aplicada</button>
+      <button role="tab" id="t4" aria-controls="p4" aria-selected="false" tabindex="-1"><small>4</small>Acceso según potencial</button>
+    </div>
+
+    <div class="panel on" role="tabpanel" id="p1" aria-labelledby="t1">
+      <h3>Cartera anual de desafíos estratégicos · Talent Hub Plus</h3>
+      <div class="stepper" id="stepper">
+        <div class="stepper-track"><div class="stepper-fill" id="stFill"></div>
+          <svg class="stepper-plane" id="stPlane" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" transform="rotate(90 12 12)"/></svg>
+        </div>
+        <div class="stepper-btns" role="tablist" aria-label="Etapas del desafío"></div>
+      </div>
+      <div class="step-detail" id="stepDetail" role="tabpanel" aria-live="polite"></div>
+      <div class="trio">
+        <div><h4>Qué se obtiene</h4><p><strong>avianca:</strong> una recomendación con caso de negocio sobre un Must Win, revisada por quien la necesita.</p><p><strong>Participante:</strong> trabajo frente a un sponsor de primer nivel y evidencia de su contribución para el comité de talento.</p></div>
+        <div><h4>Capabilities que prioriza</h4><ul><li>Mentalidad de negocio y pensamiento estratégico</li><li>Toma de decisiones y criterio directivo</li><li>Comunicación y presencia ejecutiva</li><li>Alineación de equipos y ejecución</li></ul></div>
+        <div><h4>Posición crítica</h4><p>Dejaría fuera del piloto los proyectos con empresas externas que hoy figuran en Plus: exigen acuerdos legales y de confidencialidad, y su coordinación recae en Talento. Retomarlos si el piloto interno funciona.</p></div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+      <h3>Laboratorios de reto por área · Talent Hub</h3>
+      <p class="muted">Punto de partida 2025: un laboratorio con Design Thinking.</p>
+      <div class="lab-stats">
+        <div>32<small>participantes</small></div><div>12 h<small>de aprendizaje</small></div><div>USD 0<small>costo directo</small></div><div>4,9<small>satisfacción</small></div><div>1<small>decisión operativa</small></div>
+      </div>
+      <div class="steps four">
+        <div class="step"><b>Plantear</b><p>El área dueña plantea un problema operativo o de cliente y nombra un responsable.</p></div>
+        <div class="step"><b>Diseñar</b><p>Jornada presencial con Design Thinking: 25 a 35 personas de distintas áreas y niveles.</p></div>
+        <div class="step"><b>Probar</b><p>Cuatro semanas de prueba en el área con un grupo reducido del laboratorio.</p></div>
+        <div class="step"><b>Decidir</b><p>Cierre con el líder del área: qué se implementa y qué se descarta.</p></div>
+      </div>
+      <div class="trio">
+        <div><h4>Volumen propuesto</h4><p>Cuatro laboratorios en el año, uno por Must Win. Con 25 a 35 personas cada uno, llegarían a 100–140 colaboradores.</p></div>
+        <div><h4>Quién facilita</h4><p>Colaboradores de Expert o de Desarrollo Corporativo formados en el método. Talento coordina convocatoria y metodología.</p></div>
+        <div><h4>Condición para convocar</h4><p>Sin un dueño del problema comprometido con la prueba de cuatro semanas, el laboratorio no se hace. Ese filtro evita que se convierta en un taller más.</p></div>
+      </div>
+      <div class="chips" style="margin-top:22px"><span class="chip">Orientación al cliente y servicio</span><span class="chip">Excelencia operacional</span><span class="chip">Innovación, agilidad e inteligencia artificial</span></div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+      <h3>Formación ejecutiva aplicada, en reemplazo de INALDE</h3>
+      <p style="max-width:70ch">No se contrata otro programa académico cerrado. Se contrata un servicio que acompaña la cartera de desafíos: si el nuevo proveedor solo replica módulos de contenido, duplicaría LinkedIn Learning y mantendríamos el problema 2.</p>
+      <div class="trio" style="margin-top:24px">
+        <div><h4>Qué contratar</h4><ul><li>Módulos cortos sobre las capacidades que exige cada desafío</li><li>Simulaciones o casos con datos de avianca</li><li>Acompañamiento a los equipos durante las 16 semanas</li><li>Medición antes y después, por persona y equipo</li></ul></div>
+        <div><h4>Entregables exigibles</h4><ul><li>Diseño adaptado, aprobado antes del inicio</li><li>Informe individual y por equipo</li><li>Evidencia de aplicación en el proyecto</li><li>Informe de cierre con recomendaciones</li></ul></div>
+        <div><h4>Cómo seleccionar</h4><p>Solicitud de propuestas con un desafío real de avianca como caso de prueba. Criterios: casos reales, simulación demostrable, capacidad de acompañar equipos, medición pre-post, costo por participante y confidencialidad.</p></div>
+      </div>
+      <p style="margin-top:24px"><strong>Candidatos por evaluar</strong> <span class="muted">(sin propuesta comercial ni cotización; la comparación económica queda pendiente)</span></p>
+      <div class="chips"><span class="chip">CESA</span><span class="chip">Universidad de los Andes</span><span class="chip">LIM Latam</span><span class="chip">BTS</span><span class="chip">Connect Bogotá</span><span class="chip">EAFIT</span></div>
+    </div>
+
+    <div class="panel" role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+      <h3>Acceso a experiencias según potencial y plan de desarrollo</h3>
+      <div class="steps">
+        <div class="step"><b>Diagnóstico</b><p>Resultado de la prueba de potencial (Mercer/Mettl) y nivel de contribución.</p></div>
+        <div class="step"><b>Plan de desarrollo</b><p>Una o dos brechas priorizadas con el jefe directo.</p></div>
+        <div class="step"><b>Experiencia</b><p>Proyecto, laboratorio, ruta de LinkedIn Learning o rol de asesor, según segmento.</p></div>
+        <div class="step"><b>Observación</b><p>El sponsor o líder del área registra los comportamientos observados.</p></div>
+        <div class="step"><b>Comité</b><p>Revisa la evidencia junto con la contribución y la conversación de carrera.</p></div>
+      </div>
+      <div class="trio">
+        <div><h4>Reglas publicadas</h4><ul><li>Criterios y cupos por segmento conocidos por todos</li><li>Postulación con aval del jefe directo</li><li>Prioridad a quien tiene la brecha que el desafío exige</li><li>Un proyecto por persona por ciclo</li></ul></div>
+        <div><h4>Uso responsable de la prueba</h4><p>Orienta la experiencia; no define por sí sola el ingreso a sucesión ni excluye a nadie. Ninguna decisión de carrera se toma con un solo dato.</p></div>
+        <div><h4>Sin plataformas nuevas</h4><p>Catálogo de Talentos, comités de talento y sucesión y, por validar, la asignación de rutas de LinkedIn Learning desde SAP.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CAPA IA ================= -->
+<section class="leg" id="ia" data-phase="Capa IA" data-fl="370" data-label="Capa IA">
+  <div class="wrap">
+    <div class="ia">
+      <div class="radar" aria-hidden="true"></div>
+      <div class="leg-tag" style="color:#C9BECC"><span class="fl" style="background:#fff;color:#16101A">FL370</span> Capa IA · transversal a las cuatro iniciativas</div>
+      <h2>La IA no entra como un curso más. Entra como forma de trabajar cada desafío.</h2>
+      <p class="intro">El 52 % de los participantes pidió capacidades en IA, datos y toma de decisiones. En las masterclass 2025, el caso del chatbot de Aeropuertos permitió identificar casos de uso reales del negocio.</p>
+      <div class="ia-grid">
+        <div><span class="tag">Antes del desafío</span><h3>Saber desde qué altura arranca cada persona</h3><p>Propuesta por validar: usar el diagnóstico de IA de avianca aprende como punto de partida y asignar la ruta de LinkedIn Learning que corresponde a cada nivel.</p></div>
+        <div><span class="tag">Durante el desafío</span><h3>Un uso aplicado de IA por proyecto y laboratorio</h3><p>Cada equipo documenta cómo usó IA para analizar datos, sintetizar la voz del cliente o prototipar una solución, con las herramientas que la compañía ya tiene aprobadas.</p></div>
+        <div><span class="tag">Al cierre</span><h3>Evidencia, no certificado</h3><p>El sponsor valora si el uso de IA mejoró la recomendación. Esa observación alimenta la capability de innovación, agilidad e inteligencia artificial en el comité de talento.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SIMULADOR ================= -->
+<section class="leg" id="simulador" data-phase="Simulador" data-fl="370" data-label="Simulador">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL370</span> Simulador de ruta</div>
+    <h2>Arma la ruta de un colaborador en 2027</h2>
+    <p class="intro">Elige segmento, Must Win y la capability por desarrollar. El pase muestra la experiencia que le correspondería según las reglas de esta propuesta.</p>
+
+    <div class="sim">
+      <form id="simForm" onsubmit="return false" aria-describedby="simNote">
+        <div class="field"><fieldset><legend>Segmento</legend>
+          <div class="opts">
+            <input type="radio" name="seg" id="s-plus" value="plus" checked><label for="s-plus">Talent Hub Plus</label>
+            <input type="radio" name="seg" id="s-hub" value="hub"><label for="s-hub">Talent Hub</label>
+            <input type="radio" name="seg" id="s-exp" value="exp"><label for="s-exp">Talent Hub Expert</label>
+          </div></fieldset></div>
+        <div class="field"><fieldset><legend>Must Win del desafío</legend>
+          <div class="opts">
+            <input type="radio" name="mw" id="m-op" value="op" checked><label for="m-op">Excelencia operacional</label>
+            <input type="radio" name="mw" id="m-cx" value="cx"><label for="m-cx">Experiencia consistente y amable</label>
+            <input type="radio" name="mw" id="m-rev" value="rev"><label for="m-rev">Cierre del revenue gap</label>
+            <input type="radio" name="mw" id="m-cost" value="cost"><label for="m-cost">Foco en costos</label>
+          </div></fieldset></div>
+        <div class="field"><label for="cap">Capability por desarrollar</label>
+          <select id="cap" name="cap">
+            <option value="neg">Mentalidad de negocio y pensamiento estratégico</option>
+            <option value="dec">Toma de decisiones y criterio directivo</option>
+            <option value="lid">Liderazgo efectivo e influencia</option>
+            <option value="com">Comunicación y presencia ejecutiva</option>
+            <option value="ia">Innovación, agilidad e inteligencia artificial</option>
+            <option value="exc">Excelencia operacional</option>
+            <option value="cli">Orientación al cliente y servicio</option>
+            <option value="eje">Alineación de equipos y ejecución</option>
+          </select>
+        </div>
+        <p class="sim-note" id="simNote">Simulación ilustrativa con las reglas de la propuesta. No usa datos de personas ni asigna cupos reales.</p>
+      </form>
+
+      <div>
+        <article class="pass" id="pass" aria-live="polite" aria-label="Pase de ruta generado">
+          <div class="pass-main">
+            <div class="pass-top"><strong>Pase de ruta · Talent Hub 2027</strong><span id="pFlight">THP-27</span></div>
+            <div class="route">
+              <div><div class="code">PDP</div><div class="sub">Plan de desarrollo</div></div>
+              <svg class="plane" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" transform="rotate(90 12 12)"/></svg>
+              <div><div class="code" id="pDest">OPS</div><div class="sub" id="pDestSub">Excelencia operacional</div></div>
+            </div>
+            <div class="pass-grid">
+              <div class="wide"><div class="k">Experiencia</div><div class="v" id="pExp"></div></div>
+              <div><div class="k">Duración</div><div class="v" id="pDur"></div></div>
+              <div><div class="k">Quién la acompaña</div><div class="v" id="pWho"></div></div>
+              <div class="wide"><div class="k">Qué se observa en la capability</div><div class="v" id="pObs"></div></div>
+              <div class="wide"><div class="k">Resultado de negocio que se mide</div><div class="v" id="pKpi"></div></div>
+            </div>
+            <div class="warn" id="pWarn"></div>
+          </div>
+          <aside class="stub">
+            <div><div class="k">Segmento</div><div class="v" id="sSeg">Plus</div></div>
+            <div><div class="k">Puerta</div><div class="v" id="sGate">Comité</div></div>
+            <div><div class="k">Evidencia para</div><div class="v" id="sEv" style="font-size:16px">Comité de talento</div></div>
+            <div class="barcode" aria-hidden="true"></div>
+          </aside>
+        </article>
+        <div class="cta-row" style="margin-top:18px">
+          <button class="btn btn-ghost" type="button" id="copyBtn">Copiar ruta como texto</button>
+          <span class="small muted" id="copyMsg" role="status"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TORRE DE CONTROL ================= -->
+<section class="leg" id="torre" data-phase="Torre de control" data-fl="350" data-label="Operación">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL350</span> Torre de control · modelo operativo</div>
+    <h2>Talento coordina. El negocio aporta desafíos, sponsors y evaluación.</h2>
+    <p class="intro">El programa lo administra una sola persona. El modelo solo es viable si la ejecución queda en manos de quienes necesitan el resultado.</p>
+    <div class="raci-legend"><span><i style="background:var(--grad)"></i>Lidera</span><span><i style="background:color-mix(in srgb,var(--blue) 22%,var(--bg-2))"></i>Participa</span><span class="muted">Toca un rol para ver qué hace y qué no hace.</span></div>
+    <div class="raci-wrap"><table class="raci" id="raci"><thead><tr><th scope="col">Rol</th><th scope="col">Identificar</th><th scope="col">Priorizar</th><th scope="col">Conformar</th><th scope="col">Ejecutar</th><th scope="col">Cerrar</th></tr></thead><tbody></tbody></table></div>
+    <div class="role-card" id="roleCard" aria-live="polite"><b>Administración del programa</b>Cartera de desafíos, convocatoria, reglas de acceso, proveedor e indicadores.<div class="not">No ejecuta proyectos ni facilita laboratorios.</div></div>
+    <div class="load"><strong>Carga de Talento en el ciclo de un desafío:</strong><div class="load-meter" id="loadMeter" aria-hidden="true"></div><span id="loadTxt"></span></div>
+  </div>
+</section>
+
+<!-- ================= APROXIMACIÓN ================= -->
+<section class="leg" id="aproximacion" data-phase="Aproximación" data-fl="120" data-label="Decisiones">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL120</span> Aproximación · qué ajustar del portafolio</div>
+    <h2>Clasifica el portafolio actual: ¿mantener, transformar o dejar?</h2>
+    <p class="intro">Arrastra cada tarjeta a una columna, o tócala y luego toca la columna. Al final compara tu criterio con la propuesta.</p>
+    <div class="sort-pool" id="pool" aria-label="Tarjetas por clasificar"></div>
+    <div class="buckets" id="buckets">
+      <div class="bucket" data-b="M"><button class="bk-head" type="button"><i style="background:var(--blue)"></i>Mantener</button></div>
+      <div class="bucket" data-b="T"><button class="bk-head" type="button"><i style="background:var(--magenta)"></i>Transformar</button></div>
+      <div class="bucket" data-b="D"><button class="bk-head" type="button"><i style="background:var(--red)"></i>Dejar o no iniciar</button></div>
+    </div>
+    <div class="sort-bar">
+      <button class="btn btn-primary" type="button" id="checkSort">Comparar con la propuesta</button>
+      <button class="btn btn-ghost" type="button" id="autoSort">Ver la propuesta directamente</button>
+      <button class="btn btn-ghost" type="button" id="resetSort">Reiniciar</button>
+      <span class="score" id="sortScore" role="status"></span>
+    </div>
+
+    <div style="margin-top:72px">
+      <h3 style="font-size:26px;margin-bottom:8px">Panel de alertas: riesgos de implementación</h3>
+      <p class="muted" style="margin-bottom:18px">Cada luz es un riesgo. Ábrela para ver la señal temprana y la mitigación.</p>
+      <div class="annun" id="annun" role="group" aria-label="Riesgos"></div>
+      <div class="annun-detail" id="annunDetail" aria-live="polite"><h4>Selecciona una alerta</h4><div class="muted">Las alertas revisadas cambian a verde.</div></div>
+      <div class="annun-status" id="annunStatus"></div>
+    </div>
+  </div>
+</section>
+
+<section class="leg" id="aterrizaje" data-phase="Aterrizaje" data-fl="0" data-label="Ruta">
+  <div class="wrap">
+    <div class="leg-tag"><span class="fl">FL000</span> Aterrizaje · decisiones y ruta</div>
+    <h2>Seis decisiones para despegar el piloto</h2>
+    <p class="intro">Marca las que se acuerden en la reunión. La selección queda solo en este navegador.</p>
+    <ol class="decisions" id="decisions">
+      <li><div><b>Cambio de foco</b><p>Aprobar los proyectos como mecanismo principal de 2027 y el menor peso de la formación de aula.</p></div><input type="checkbox" aria-label="Acordado: cambio de foco"></li>
+      <li><div><b>Desafíos y sponsors</b><p>Respaldar la solicitud a cada C-level de un desafío y un sponsor para el piloto.</p></div><input type="checkbox" aria-label="Acordado: desafíos y sponsors"></li>
+      <li><div><b>Proveedor</b><p>Autorizar la salida de INALDE y la solicitud de propuestas a los seis candidatos.</p></div><input type="checkbox" aria-label="Acordado: proveedor"></li>
+      <li><div><b>Presupuesto</b><p>Definir el presupuesto 2027 y si la referencia de 2025 se mantiene.</p></div><input type="checkbox" aria-label="Acordado: presupuesto"></li>
+      <li><div><b>Dedicación</b><p>Acordar con los VP el tiempo que los participantes pueden dedicar a los proyectos.</p></div><input type="checkbox" aria-label="Acordado: dedicación"></li>
+      <li><div><b>Expert y sucesión</b><p>Definir el segmento Expert y aprobar el uso de la evidencia de proyectos en comités de talento y sucesión.</p></div><input type="checkbox" aria-label="Acordado: Expert y sucesión"></li>
+    </ol>
+    <p class="dec-count" id="decCount" role="status" tabindex="-1">0 de 6 decisiones acordadas</p>
+
+    <div style="margin-top:72px">
+      <h3 style="font-size:26px;margin-bottom:18px">Implementación gradual</h3>
+      <div class="timeline">
+        <div class="tl"><div class="when">Nov.–dic. 2026</div><div class="dot"></div><b>Validación</b><p>Aprobación, cierre de datos pendientes, convocatoria de desafíos y solicitud de propuestas.</p></div>
+        <div class="tl"><div class="when">Ene.–feb. 2027</div><div class="dot"></div><b>Preparación</b><p>Proveedor, 3 desafíos priorizados, equipos conformados y definición de Expert.</p></div>
+        <div class="tl key"><div class="when">Mar.–jun. 2027</div><div class="dot"></div><b>Piloto</b><p>3 desafíos en Talent Hub Plus y 2 laboratorios en Talent Hub.</p></div>
+        <div class="tl key"><div class="when">Jul. 2027</div><div class="dot"></div><b>Decisión</b><p>Evaluación del piloto y decisión de escalar.</p></div>
+        <div class="tl"><div class="when">Ago.–nov. 2027</div><div class="dot"></div><b>Segundo ciclo</b><p>Ajustes, ampliación según resultados y cartera 2028.</p></div>
+      </div>
+      <div class="month-ctrl">
+        <label for="monthRange"><strong>Recorre el calendario mes a mes</strong></label>
+        <input type="range" id="monthRange" min="0" max="12" value="0" step="1">
+        <div class="month-scale" aria-hidden="true"><span>Nov 26</span><span>Feb 27</span><span>May 27</span><span>Ago 27</span><span>Nov 27</span></div>
+        <div class="month-card" aria-live="polite"><div class="m" id="mName">Nov 2026</div><div><div class="ph" id="mPhase"></div><div class="muted" id="mDo"></div></div></div>
+      </div>
+      <div class="criteria">
+        <h3>Criterios para escalar en julio <span class="muted" style="font-weight:500;font-size:16px">· umbrales propuestos, por validar</span></h3>
+        <ul>
+          <li>Al menos 2 de 3 desafíos terminan con una recomendación adoptada o en implementación por el sponsor.</li>
+          <li>Los sponsors asisten a la mayoría de las revisiones y registran capacidades observadas.</li>
+          <li>La carga de administración es sostenible para una persona, medida en horas semanales durante el piloto.</li>
+          <li>Participantes y jefes consideran que el tiempo invertido valió la pena.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<div class="takeoff" id="takeoff" role="dialog" aria-modal="true" aria-labelledby="toTitle">
+  <div>
+    <div class="runway"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" transform="rotate(90 12 12)"/></svg></div>
+    <h3 id="toTitle">Plan de vuelo listo para despegar</h3>
+    <p>Las seis decisiones quedaron marcadas como acordadas. El siguiente paso es la validación con la dirección en noviembre y diciembre.</p>
+    <button class="btn btn-primary" type="button" id="toClose">Volver a la propuesta</button>
+  </div>
+</div>
+<div class="present-hint" aria-hidden="true">Modo presentación · ↑ ↓ para navegar · Esc para salir</div>
+
+<footer>
+  <div class="wrap foot-grid">
+    <div>
+      <h3>Fuentes</h3>
+      <p>Informe Talent Hub 2025 (resultados 2025, costos y arquitectura 2026) y brief de la dirección para 2027. Todo lo presentado como propuesta está pendiente de validación; nada está aprobado. Los movimientos de población no se atribuyen a Talent Hub sin un grupo de comparación.</p>
+    </div>
+    <div>
+      <h3>Datos por validar antes de la versión ejecutiva</h3>
+      <ul>
+        <li>Talent Hub Expert no aparece en la arquitectura 2026; el gráfico nombra «Talent Plus» al segmento Plus.</li>
+        <li>Costo de INALDE: USD 120.000 en la ficha y USD 131.578 en la tabla de costos.</li>
+        <li>Diferencias entre ficha y tabla en masterclass, Presencia Ejecutiva y viajes.</li>
+        <li>Base de cálculo de la movilidad 2024 frente a 2025.</li>
+        <li>Población base 2027 por segmento y resultados de ejecución 2026.</li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = s => document.querySelector(s);
+
+  /* ---------- theme toggle ---------- */
+  const root = document.documentElement;
+  try{ const t = localStorage.getItem('th27-theme'); if(t) root.dataset.theme = t; }catch(e){}
+  $('#themeBtn').addEventListener('click', ()=>{
+    const dark = root.dataset.theme ? root.dataset.theme==='dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try{ localStorage.setItem('th27-theme', root.dataset.theme); }catch(e){}
+  });
+
+  /* ---------- clock (Bogotá) ---------- */
+  function tick(){
+    try{ $('#clock').textContent = new Intl.DateTimeFormat('es-CO',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'America/Bogota'}).format(new Date()) + ' BOG'; }
+    catch(e){ $('#clock').textContent=''; }
+  }
+  tick(); setInterval(tick, 30000);
+
+  /* ---------- split-flap board ---------- */
+  const rows = [
+    ['TH+ 27','DESAFÍOS ESTRATÉGICOS','16 SEM','EMBARCANDO','st-ok'],
+    ['TH 27','LABORATORIOS DE RETO','4 SEM','PROGRAMADO','st-plan'],
+    ['THX 27','ASESORÍA TÉCNICA','SEGÚN RETO','POR DEFINIR','st-tbd'],
+    ['EXEC 27','FORMACIÓN APLICADA','16 SEM','EN REVISIÓN','st-rev'],
+    ['INALDE','FORMACIÓN DE AULA','—','EN REVISIÓN','st-rev']
+  ];
+  const widths = [7,21,10,11];
+  const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+ ';
+  const body = $('#boardBody');
+  const cells = [];
+  const rowTargets = [['crucero',0],['crucero',1],['ascenso',null],['crucero',2],['aproximacion',null]];
+  rows.forEach((r,ri)=>{
+    const tr = document.createElement('tr');
+    tr.tabIndex = 0; tr.setAttribute('role','link'); tr.setAttribute('aria-label', `${r[0]}: ${r[1]}, ${r[3]}. Ir al detalle`);
+    const go = ()=>{ const [id,tab] = rowTargets[ri]; if(tab!==null && window.__selectTab) window.__selectTab(tab); document.getElementById(id).scrollIntoView({behavior: reduce?'auto':'smooth'}); };
+    tr.addEventListener('click', go);
+    tr.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); } });
+    for(let c=0;c<4;c++){
+      const td = document.createElement('td');
+      const f = document.createElement('span'); f.className='flap' + (c===3 ? ' '+r[4] : '');
+      f.setAttribute('aria-label', r[c]);
+      const txt = r[c].padEnd(widths[c],' ').slice(0,widths[c]);
+      for(const ch of txt){ const b=document.createElement('b'); b.setAttribute('aria-hidden','true'); b.textContent = reduce ? (ch===' '?'\u00a0':ch) : '\u00a0'; b.dataset.t = ch; f.appendChild(b); cells.push(b); }
+      td.appendChild(f); tr.appendChild(td);
+    }
+    body.appendChild(tr);
+  });
+  if(!reduce){
+    cells.forEach((b,i)=>{
+      const target = b.dataset.t; let n = 6 + Math.floor(Math.random()*10) + Math.floor(i/14);
+      const step = ()=>{
+        if(n-- <= 0){ b.textContent = target===' ' ? '\u00a0' : target; return; }
+        b.textContent = CH[Math.floor(Math.random()*CH.length)];
+        setTimeout(step, 45);
+      };
+      setTimeout(step, 250 + (i%14)*25);
+    });
+  }
+
+  /* ---------- guess game ---------- */
+  const gR = $('#guessRange'), gV = $('#guessVal'), gYou = $('#gYou'), gReal = $('#gReal');
+  const upd = ()=>{ gV.textContent = gR.value + ' %'; gYou.style.left = gR.value + '%'; };
+  gR.addEventListener('input', upd); upd();
+  $('#guessBtn').addEventListener('click', ()=>{
+    const g = +gR.value, real = 74.6, d = Math.abs(g-real);
+    gReal.style.width = real + '%';
+    let msg = d<=5 ? '¡Muy cerca!' : (g<real ? 'Es bastante más.' : 'Es algo menos.');
+    $('#guessResult').innerHTML = `<strong>${msg}</strong> Fue cerca del 75 %: INALDE recibió USD 131.578 de 176.478. Tu estimación fue ${g} %.`;
+    $('#guessBtn').textContent = 'Estimación confirmada';
+  });
+
+  /* ---------- investment bars with views ---------- */
+  const inv = [
+    {k:'INALDE Seniors',cost:100000,sat:4.9,satL:'4,9',part:98,partL:'98 %',hot:1},
+    {k:'INALDE Mandos Medios',cost:31578,sat:4.9,satL:'4,9',part:99,partL:'99 %',hot:1},
+    {k:'Presencia Ejecutiva',cost:17000,sat:4.6,satL:'4,6',part:80,partL:'80 %'},
+    {k:'Masterclass Los Andes',cost:10000,sat:4.53,satL:'4,53',part:45,partL:'38–49 %'},
+    {k:'Future Lead',cost:10000,sat:4.85,satL:'4,7 / 5,0',part:92.5,partL:'90–95 %'},
+    {k:'Viajes de aprendizaje',cost:7900,sat:5.0,satL:'5,0',part:97,partL:'97 % inscritos'},
+    {k:'Laboratorios prácticos',cost:0,sat:4.9,satL:'4,9',part:null,partL:'32 personas'},
+    {k:'Masterclass invertidas',cost:0,sat:4.9,satL:'4,9',part:40,partL:'40 %'}
+  ];
+  const VIEWS = {
+    cost:{title:'Costo total por iniciativa, USD',w:d=>d.cost/100000*100,l:d=>d.cost.toLocaleString('es-CO'),
+      read:'El costo varía de cero a USD 100.000 entre formatos. INALDE concentra casi tres de cada cuatro dólares.'},
+    sat:{title:'Satisfacción por formato, escala de 1 a 5',w:d=>(d.sat-4)/1*100,l:d=>d.satL,
+      read:'Escala recortada de 4 a 5 para ver diferencias: aun así todos los formatos están entre 4,5 y 5,0. Los de costo cero empatan con INALDE.'},
+    part:{title:'Participación por formato',w:d=>d.part==null?0:d.part,l:d=>d.partL,
+      read:'Los formatos con grupo definido superan el 80 %. Las masterclass abiertas quedan entre 38 % y 49 %. Laboratorios: 32 personas, sin porcentaje en el informe.'}
+  };
+  const bars = $('#bars');
+  inv.forEach(d=>{
+    const el=document.createElement('div'); el.className='bar'+(d.hot?' hot':'');
+    el.innerHTML = `<span>${d.k}</span><span class="track"><span class="fill"></span></span><span class="v"></span>`;
+    bars.appendChild(el); d.el = el;
+  });
+  let barsVisible = false, view = 'cost';
+  function drawBars(){
+    const V = VIEWS[view];
+    $('#barsTitle').textContent = V.title; $('#barRead').textContent = V.read;
+    inv.forEach(d=>{ d.el.querySelector('.v').textContent = V.l(d); d.el.querySelector('.fill').style.width = (barsVisible ? Math.max(0,V.w(d)) : 0) + '%'; });
+  }
+  document.querySelectorAll('.seg-ctrl button').forEach(b=> b.addEventListener('click', ()=>{
+    document.querySelectorAll('.seg-ctrl button').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+    view = b.dataset.view; barsVisible = true; drawBars();
+  }));
+  drawBars();
+  if(reduce || !('IntersectionObserver' in window)){ barsVisible = true; drawBars(); }
+  else { const io = new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)){ barsVisible = true; drawBars(); io.disconnect(); } },{threshold:.3}); io.observe(bars); }
+
+  /* ---------- before / after ---------- */
+  const shiftRows = [
+    ['Qué se diseña','Un calendario de actividades por nivel.','Una cartera de desafíos priorizados con los C-level y ligados a un Must Win.'],
+    ['Formación ejecutiva','Un programa en sí mismo.','Acompaña a los equipos en las capacidades que el desafío exige.'],
+    ['Proyectos','Un componente de Talent Hub Plus.','Todos los segmentos aplican capacidades en retos reales, con profundidad distinta.'],
+    ['Prueba de potencial','Funciona como diagnóstico.','Orienta a qué experiencia accede cada persona y qué se observa en ella.'],
+    ['Medición','Satisfacción y asistencia.','Qué entregó el proyecto, qué capacidades se observaron y qué movimiento habilitó.']
+  ];
+  const shift = $('#shift');
+  function renderShift(y){
+    shift.dataset.year = y;
+    shift.innerHTML = shiftRows.map(r=>`<div class="shift-row"><div class="k">${r[0]}</div><div class="v">${y==='2026'?r[1]:r[2]}</div></div>`).join('');
+  }
+  renderShift('2027');
+  document.querySelectorAll('.switch button').forEach(b=> b.addEventListener('click',()=>{
+    document.querySelectorAll('.switch button').forEach(x=>x.setAttribute('aria-pressed', String(x===b)));
+    renderShift(b.dataset.year);
+  }));
+
+  /* ---------- tabs ---------- */
+  const tabs = [...document.querySelectorAll('[role="tab"]')];
+  function selectTab(t, focus){
+    tabs.forEach(x=>{
+      const on = x===t; x.setAttribute('aria-selected', String(on)); x.tabIndex = on?0:-1;
+      const p = document.getElementById(x.getAttribute('aria-controls')); p.hidden = !on; p.classList.toggle('on', on);
+    });
+    if(focus) t.focus();
+  }
+  window.__selectTab = i => selectTab(tabs[i]);
+  tabs.forEach((t,i)=>{
+    t.addEventListener('click',()=>selectTab(t));
+    t.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight'){ e.preventDefault(); selectTab(tabs[(i+1)%tabs.length],true); }
+      if(e.key==='ArrowLeft'){ e.preventDefault(); selectTab(tabs[(i-1+tabs.length)%tabs.length],true); }
+    });
+  });
+
+  /* ---------- simulator ---------- */
+  const SEG = {
+    plus:{name:'Talent Hub Plus',short:'Plus',code:'THP',exp:'Proyecto estratégico en equipo interdisciplinario de 4 a 6 personas',dur:'16 semanas',who:'Sponsor de primer nivel y proveedor de formación aplicada',gate:'Comité',ev:'Comité de talento y sucesión',
+          prio:['neg','dec','com','eje']},
+    hub:{name:'Talent Hub',short:'Hub',code:'THB',exp:'Laboratorio de reto con el área dueña del problema, más ruta de LinkedIn Learning según brecha',dur:'1 jornada + 4 semanas de prueba',who:'Líder del área dueña del problema',gate:'Área',ev:'Plan de desarrollo y comité de talento',
+          prio:['cli','exc','ia']},
+    exp:{name:'Talent Hub Expert',short:'Expert',code:'THX',exp:'Rol de asesor técnico en un proyecto o laboratorio, o masterclass invertida para otro nivel',dur:'Según la demanda técnica del desafío',who:'Equipo del proyecto y Desarrollo Corporativo',gate:'Asesoría',ev:'Reconocimiento del rol experto',
+          prio:['ia','exc','com','cli']}
+  };
+  const MW = {
+    op:{code:'OPS',name:'Excelencia operacional',kpi:'Indicador operativo del proceso intervenido, con línea base definida por el sponsor.'},
+    cx:{code:'CX',name:'Experiencia consistente y amable',kpi:'Indicador de experiencia del cliente en el punto intervenido, antes y después.'},
+    rev:{code:'REV',name:'Cierre del revenue gap',kpi:'Ingreso o conversión asociados a la recomendación, validados con el área comercial.'},
+    cost:{code:'CST',name:'Foco en costos',kpi:'Ahorro estimado de la recomendación, validado por Finanzas.'}
+  };
+  const CAP = {
+    neg:['Mentalidad de negocio y pensamiento estratégico','Conecta la recomendación con los resultados del área y con el Must Win, no solo con la tarea.'],
+    dec:['Toma de decisiones y criterio directivo','Elige entre alternativas con información incompleta y explica el costo de no decidir.'],
+    lid:['Liderazgo efectivo e influencia','Consigue compromiso de áreas y personas que no le reportan.'],
+    com:['Comunicación y presencia ejecutiva','Presenta la recomendación al comité de forma breve y sostiene la discusión.'],
+    ia:['Innovación, agilidad e inteligencia artificial','Prueba una solución pequeña, usa IA para analizar o prototipar y ajusta con evidencia.'],
+    exc:['Excelencia operacional','Mide el proceso antes y después y elimina un desperdicio concreto.'],
+    cli:['Orientación al cliente y servicio','Define el problema desde la voz del cliente, no desde la del área.'],
+    eje:['Alineación de equipos y ejecución','Distribuye el trabajo, cumple hitos y resuelve bloqueos sin escalar todo.']
+  };
+  const form = $('#simForm'), pass = $('#pass');
+  function val(n){ const el = form.querySelector(`[name="${n}"]:checked`) || form.querySelector(`[name="${n}"]`); return el.value; }
+  function renderPass(animate){
+    const s = SEG[val('seg')], m = MW[val('mw')], ck = val('cap'), c = CAP[ck];
+    $('#pFlight').textContent = `${s.code}-27 · ${m.code}`;
+    $('#pDest').textContent = m.code; $('#pDestSub').textContent = m.name;
+    $('#pExp').textContent = s.exp + '.';
+    $('#pDur').textContent = s.dur; $('#pWho').textContent = s.who;
+    $('#pObs').textContent = c[1];
+    $('#pKpi').textContent = m.kpi;
+    $('#sSeg').textContent = s.short; $('#sGate').textContent = s.gate; $('#sEv').textContent = s.ev;
+    const w = $('#pWarn');
+    if(!s.prio.includes(ck)){
+      const alt = Object.entries(SEG).find(([k,v])=>v.prio.includes(ck));
+      w.textContent = `Esta capability no es prioridad de ${s.name} en la propuesta.` + (alt ? ` Se desarrolla mejor en ${alt[1].name}; el plan de desarrollo puede combinarla con la experiencia principal.` : ' Se puede trabajar como objetivo secundario del proyecto.');
+      w.classList.add('on');
+    } else { w.textContent=''; w.classList.remove('on'); }
+    if(animate && !reduce){ pass.classList.remove('print-in'); void pass.offsetWidth; pass.classList.add('print-in'); }
+  }
+  form.addEventListener('change', ()=>renderPass(true));
+  renderPass(false);
+  $('#copyBtn').addEventListener('click', async ()=>{
+    const t = [
+      'Pase de ruta · Talent Hub 2027 (simulación)',
+      'Segmento: ' + SEG[val('seg')].name,
+      'Must Win: ' + MW[val('mw')].name,
+      'Capability: ' + CAP[val('cap')][0],
+      'Experiencia: ' + $('#pExp').textContent,
+      'Duración: ' + $('#pDur').textContent,
+      'Acompaña: ' + $('#pWho').textContent,
+      'Qué se observa: ' + $('#pObs').textContent,
+      'Resultado de negocio: ' + $('#pKpi').textContent
+    ].join('\n');
+    const msg = $('#copyMsg');
+    try{ await navigator.clipboard.writeText(t); msg.textContent = 'Ruta copiada.'; }
+    catch(e){ msg.textContent = 'El navegador no permitió copiar. Selecciona el texto del pase manualmente.'; }
+    setTimeout(()=>msg.textContent='', 3500);
+  });
+
+  /* ---------- flip cards ---------- */
+  document.querySelectorAll('[data-flip]').forEach(card=>{
+    const front = card.querySelector('.flip-front'), back = card.querySelector('.flip-back');
+    const fBtn = front.querySelector('.turn'), bBtn = back.querySelector('.turn');
+    const set = on=>{
+      card.classList.toggle('on', on); fBtn.setAttribute('aria-expanded', String(on));
+      back.setAttribute('aria-hidden', String(!on)); front.setAttribute('aria-hidden', String(on));
+      fBtn.tabIndex = on?-1:0; bBtn.tabIndex = on?0:-1; (on?bBtn:fBtn).focus({preventScroll:true});
+    };
+    fBtn.addEventListener('click', ()=>set(true)); bBtn.addEventListener('click', ()=>set(false));
+  });
+
+  /* ---------- stepper iniciativa 1 ---------- */
+  const STEPS = [
+    {n:'Identificar',when:'Oct.–dic. 2026',lead:'Socias de negocio con cada C-level',out:'Ficha de desafío: Must Win, dueño, alcance y dato de partida.'},
+    {n:'Priorizar',when:'Ene.–feb. 2027',lead:'Comité de talento',out:'Tres desafíos aprobados para el piloto, con sponsor confirmado.'},
+    {n:'Conformar',when:'Ene.–feb. 2027',lead:'Administración del programa',out:'Equipos de 4 a 6 personas y dedicación acordada con cada jefe.'},
+    {n:'Ejecutar',when:'Mar.–jun. 2027',lead:'Equipo, con sponsor y proveedor',out:'Avances presentados al sponsor cada cuatro semanas.'},
+    {n:'Cerrar',when:'Jun.–jul. 2027',lead:'Sponsor y comité de talento',out:'Recomendación con caso de negocio y registro de capacidades observadas.'}
+  ];
+  const sb = document.querySelector('.stepper-btns');
+  STEPS.forEach((st,i)=>{ const b=document.createElement('button'); b.type='button'; b.setAttribute('role','tab'); b.innerHTML=`<small>${i+1}</small>${st.n}`; b.addEventListener('click',()=>pickStep(i)); sb.appendChild(b); });
+  function pickStep(i){
+    const st = STEPS[i], pct = i/(STEPS.length-1)*100;
+    $('#stFill').style.width = pct+'%'; $('#stPlane').style.left = pct+'%';
+    sb.querySelectorAll('button').forEach((b,j)=>{ b.setAttribute('aria-selected', String(i===j)); b.tabIndex = i===j?0:-1; });
+    $('#stepDetail').innerHTML = `<div><div class="k">Etapa ${i+1} de 5 · ${st.n}</div><div class="v big">${st.out}</div></div><div><div class="k">Quién lidera</div><div class="v">${st.lead}</div></div><div><div class="k">Cuándo, en el piloto</div><div class="v">${st.when}</div></div>`;
+  }
+  sb.addEventListener('keydown', e=>{
+    const cur = [...sb.children].findIndex(b=>b.getAttribute('aria-selected')==='true');
+    if(e.key==='ArrowRight'){ e.preventDefault(); pickStep(Math.min(4,cur+1)); sb.children[Math.min(4,cur+1)].focus(); }
+    if(e.key==='ArrowLeft'){ e.preventDefault(); pickStep(Math.max(0,cur-1)); sb.children[Math.max(0,cur-1)].focus(); }
+  });
+  pickStep(0);
+
+  /* ---------- RACI ---------- */
+  const ROLES = [
+    {r:'Administración del programa',m:['P','P','L','',''],does:'Cartera de desafíos, convocatoria, reglas de acceso, proveedor e indicadores.',not:'No ejecuta proyectos ni facilita laboratorios.'},
+    {r:'Comité de talento',m:['','L','','','P'],does:'Prioriza desafíos y revisa la evidencia de cada participante.',not:'No asigna personas una por una.'},
+    {r:'Socias de negocio',m:['L','','','',''],does:'Recogen desafíos con su C-level y siguen los compromisos de los sponsors.',not:''},
+    {r:'Sponsor',m:['P','','','P','L'],does:'Define el desafío, asiste a las revisiones, decide en el cierre y registra capacidades observadas.',not:'No delega el cierre.'},
+    {r:'Jefe directo',m:['','','P','',''],does:'Avala la postulación y protege la dedicación acordada.',not:''},
+    {r:'Participante',m:['','','P','L','P'],does:'Entrega el proyecto y actualiza su plan de desarrollo.',not:''},
+    {r:'Proveedor',m:['','','','P',''],does:'Módulos, método, acompañamiento a equipos e informes.',not:'No define los desafíos.'},
+    {r:'Expert y Desarrollo Corporativo',m:['','','','P',''],does:'Facilitan laboratorios y asesoran técnicamente los proyectos.',not:''}
+  ];
+  const raci = $('#raci'), rb = raci.querySelector('tbody');
+  ROLES.forEach((x,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML = `<th scope="row"><button type="button" aria-pressed="false">${x.r}</button></th>` + x.m.map(v=>`<td class="${v}">${v==='L'?'Lidera':v==='P'?'Participa':''}</td>`).join('');
+    tr.querySelector('button').addEventListener('click',()=>pickRole(i));
+    rb.appendChild(tr);
+  });
+  let roleOn = -1;
+  function pickRole(i){
+    const same = roleOn===i; roleOn = same ? -1 : i;
+    raci.classList.toggle('focus', roleOn>=0);
+    [...rb.children].forEach((tr,j)=>{ tr.classList.toggle('hl', j===roleOn); tr.querySelector('button').setAttribute('aria-pressed', String(j===roleOn)); });
+    const x = ROLES[roleOn>=0?roleOn:0];
+    $('#roleCard').innerHTML = `<b>${x.r}</b>${x.does}${x.not?`<div class="not">${x.not}</div>`:''}`;
+  }
+  const lm = $('#loadMeter'); ROLES[0].m.forEach(v=>{ const sp=document.createElement('span'); if(v==='L') sp.className='on'; lm.appendChild(sp); });
+  $('#loadTxt').textContent = 'lidera 1 de 5 etapas; en las otras acompaña o no interviene.';
+
+  /* ---------- juego clasificar ---------- */
+  const ITEMS = [
+    ['INALDE','T','Se transforma en formación aplicada ligada a la cartera de desafíos.'],
+    ['Future Lead','M','Participación de 90 % a 95 % y presencia de C-level.'],
+    ['Laboratorios prácticos','M','Alta valoración, costo directo cero y una decisión operativa.'],
+    ['Masterclass invertidas','M','Valorizan el rol experto, sin costo directo.'],
+    ['Masterclass sin vínculo con un desafío','D','Participación de 38 % a 49 %; el contenido ya está en LinkedIn Learning.'],
+    ['Viajes de aprendizaje','T','Solo cuando un desafío los requiera, con pregunta previa y entregable.'],
+    ['Presencia Ejecutiva','T','Para quienes presentarán ante comité; menos sesiones y más largas.'],
+    ['Proyectos con empresas externas','D','Aplazar hasta validar el piloto interno.'],
+    ['Rotaciones temporales como programa','D','Alto costo de coordinación; solo como cupo puntual en un proyecto.'],
+    ['Prueba de potencial','M','Como insumo para orientar la experiencia, no como veredicto.'],
+    ['Medición por satisfacción','T','Pasa a medir resultados del proyecto y capacidades observadas.'],
+    ['Horas de formación como meta','D','No indican valor para el negocio.']
+  ];
+  const pool = $('#pool'), bucketsEl = $('#buckets');
+  let selected = null;
+  function makeChip(it,idx){
+    const c=document.createElement('button'); c.type='button'; c.className='card-chip'; c.draggable=true; c.dataset.i=idx; c.setAttribute('aria-pressed','false');
+    c.innerHTML = `${it[0]}<span class="why">${it[2]}</span>`;
+    c.addEventListener('click',()=>{ if(c.parentElement!==pool && bucketsEl.classList.contains('revealed')) return; selected = (selected===c)?null:c; document.querySelectorAll('.card-chip').forEach(x=>x.setAttribute('aria-pressed', String(x===selected))); });
+    c.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain', idx); c.classList.add('dragging'); });
+    c.addEventListener('dragend',()=>c.classList.remove('dragging'));
+    return c;
+  }
+  function resetSort(){
+    pool.innerHTML=''; bucketsEl.querySelectorAll('.card-chip').forEach(c=>c.remove()); bucketsEl.classList.remove('revealed');
+    ITEMS.map((it,i)=>[it,i]).sort(()=>Math.random()-.5).forEach(([it,i])=>pool.appendChild(makeChip(it,i)));
+    $('#sortScore').textContent=''; selected=null;
+  }
+  function place(chip,bk){ chip.classList.remove('ok','no'); bk.appendChild(chip); chip.setAttribute('aria-pressed','false'); selected=null; }
+  bucketsEl.querySelectorAll('.bucket').forEach(bk=>{
+    bk.querySelector('.bk-head').addEventListener('click',()=>{ if(selected) place(selected,bk); });
+    bk.addEventListener('dragover',e=>{ e.preventDefault(); bk.classList.add('over'); });
+    bk.addEventListener('dragleave',()=>bk.classList.remove('over'));
+    bk.addEventListener('drop',e=>{ e.preventDefault(); bk.classList.remove('over'); const c=document.querySelector(`.card-chip[data-i="${e.dataTransfer.getData('text/plain')}"]`); if(c) place(c,bk); });
+  });
+  pool.addEventListener('dragover',e=>e.preventDefault());
+  pool.addEventListener('drop',e=>{ e.preventDefault(); const c=document.querySelector(`.card-chip[data-i="${e.dataTransfer.getData('text/plain')}"]`); if(c){ c.classList.remove('ok','no'); pool.appendChild(c);} });
+  pool.addEventListener('click',e=>{ if(e.target===pool && selected){ selected.classList.remove('ok','no'); pool.appendChild(selected); selected.setAttribute('aria-pressed','false'); selected=null; } });
+  $('#checkSort').addEventListener('click',()=>{
+    let ok=0, placed=0;
+    bucketsEl.querySelectorAll('.bucket').forEach(bk=> bk.querySelectorAll('.card-chip').forEach(c=>{ placed++; const right = ITEMS[c.dataset.i][1]===bk.dataset.b; c.classList.toggle('ok',right); c.classList.toggle('no',!right); if(right) ok++; }));
+    bucketsEl.classList.add('revealed');
+    $('#sortScore').textContent = placed ? `Coincides con la propuesta en ${ok} de ${placed}` + (placed<ITEMS.length?` (faltan ${ITEMS.length-placed} por clasificar)`:'') : 'Clasifica al menos una tarjeta.';
+  });
+  $('#autoSort').addEventListener('click',()=>{
+    resetSort();
+    [...pool.querySelectorAll('.card-chip')].forEach(c=> bucketsEl.querySelector(`.bucket[data-b="${ITEMS[c.dataset.i][1]}"]`).appendChild(c));
+    bucketsEl.classList.add('revealed'); $('#sortScore').textContent='Así queda el portafolio en la propuesta.';
+  });
+  $('#resetSort').addEventListener('click',resetSort);
+  resetSort();
+
+  /* ---------- annunciator ---------- */
+  const RISKS = [
+    ['SIN DESAFÍOS','Los C-level no proponen desafíos o proponen tareas operativas','Menos de tres desafíos válidos en diciembre','Plantilla y criterios de desafío; Socias de negocio co-construyen; respaldo de la dirección'],
+    ['SPONSOR SIN TIEMPO','Los sponsors no tienen tiempo','Revisiones canceladas en el primer mes','Compromiso explícito al inicio; máximo un desafío por sponsor'],
+    ['DEDICACIÓN','Los jefes no liberan tiempo','Inasistencia a sesiones de equipo','Dedicación acordada con el jefe y los VP antes de iniciar'],
+    ['SOBRECARGA TALENTO','Talento termina ejecutando los proyectos','La administración asume tareas del equipo','Roles definidos; el proveedor acompaña el método; tope de desafíos en el piloto'],
+    ['ETIQUETA DE POTENCIAL','La prueba de potencial se usa como etiqueta','Personas excluidas por un puntaje','Uso como insumo y decisión con varias fuentes'],
+    ['EXPECTATIVA ASCENSO','Expectativa de ascenso','Frustración al cierre del proyecto','Comunicar que amplía la preparación, no garantiza una posición'],
+    ['CAMBIO PROVEEDOR','Vacío por cambio de proveedor','Sin contrato al iniciar el piloto','Solicitud de propuestas en diciembre y enero'],
+    ['DATOS POR VALIDAR','Se presentan cifras con inconsistencias','Diferencias entre fichas y tabla de costos del informe','Validar costos, población y base de movilidad antes de la versión ejecutiva']
+  ];
+  const an = $('#annun'); const seen = new Set();
+  RISKS.forEach((r,i)=>{
+    const b=document.createElement('button'); b.type='button'; b.className='lit'; b.textContent=r[0]; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',()=>{
+      seen.add(i); an.querySelectorAll('button').forEach((x,j)=>{ x.setAttribute('aria-pressed', String(i===j)); if(seen.has(j)){ x.classList.remove('lit'); x.classList.add('seen'); } });
+      $('#annunDetail').innerHTML = `<h4>${r[1]}</h4><div><div class="k">Señal temprana</div><div>${r[2]}</div></div><div><div class="k">Mitigación</div><div>${r[3]}</div></div>`;
+      $('#annunStatus').textContent = seen.size===RISKS.length ? 'Todas las alertas revisadas.' : `${seen.size} de ${RISKS.length} alertas revisadas`;
+    });
+    an.appendChild(b);
+  });
+  $('#annunStatus').textContent = `0 de ${RISKS.length} alertas revisadas`;
+
+  /* ---------- month slider ---------- */
+  const MONTHS = ['Nov 2026','Dic 2026','Ene 2027','Feb 2027','Mar 2027','Abr 2027','May 2027','Jun 2027','Jul 2027','Ago 2027','Sep 2027','Oct 2027','Nov 2027'];
+  const PHASES = [
+    {to:1,tl:0,ph:'Validación',d:'Aprobación de la dirección, cierre de datos pendientes, convocatoria de desafíos y solicitud de propuestas a proveedores.'},
+    {to:3,tl:1,ph:'Preparación',d:'Selección de proveedor, priorización de 3 desafíos, conformación de equipos y definición de Expert.'},
+    {to:7,tl:2,ph:'Piloto',d:'3 desafíos en Talent Hub Plus y 2 laboratorios en Talent Hub, con revisiones del sponsor cada cuatro semanas.'},
+    {to:8,tl:3,ph:'Decisión',d:'Evaluación del piloto con los criterios de escalamiento y decisión de la dirección.'},
+    {to:12,tl:4,ph:'Segundo ciclo',d:'Ajustes, ampliación según resultados y preparación de la cartera 2028.'}
+  ];
+  const tls = [...document.querySelectorAll('.timeline .tl')];
+  function drawMonth(){
+    const m = +$('#monthRange').value, ph = PHASES.find(p=>m<=p.to);
+    $('#mName').textContent = MONTHS[m]; $('#mPhase').textContent = ph.ph; $('#mDo').textContent = ph.d;
+    tls.forEach((t,i)=>t.classList.toggle('active', i===ph.tl));
+  }
+  $('#monthRange').addEventListener('input', drawMonth); drawMonth();
+
+  /* ---------- decisions ---------- */
+  const boxes = [...document.querySelectorAll('#decisions input')];
+  try{ const saved = JSON.parse(localStorage.getItem('th27-dec')||'[]'); boxes.forEach((b,i)=> b.checked = !!saved[i]); }catch(e){}
+  let flown = false;
+  function countDec(fromUser){
+    const n = boxes.filter(b=>b.checked).length;
+    if(fromUser && n===6 && !flown){ flown = true; const t=$('#takeoff'); t.classList.add('on'); const svg=t.querySelector('svg'); svg.style.animation='none'; void svg.offsetWidth; svg.style.animation=''; $('#toClose').focus(); }
+    if(n<6) flown = false;
+    $('#decCount').textContent = `${n} de 6 decisiones acordadas`;
+    try{ localStorage.setItem('th27-dec', JSON.stringify(boxes.map(b=>b.checked))); }catch(e){}
+  }
+  boxes.forEach(b=> b.addEventListener('change', ()=>countDec(true))); countDec(false);
+  const closeTO = ()=>{ $('#takeoff').classList.remove('on'); $('#decCount').focus(); };
+  $('#toClose').addEventListener('click', closeTO);
+  $('#takeoff').addEventListener('click', e=>{ if(e.target.id==='takeoff') closeTO(); });
+
+  /* ---------- HUD: altitude, phase, rail, next ---------- */
+  const legs = [...document.querySelectorAll('main > section')];
+  const rail = $('#rail');
+  legs.forEach(s=>{
+    if(!s.id || !s.dataset.label) return;
+    const a = document.createElement('a'); a.href = '#'+s.id; a.dataset.for = s.id;
+    a.innerHTML = `<i></i><span>${s.dataset.label}</span>`; rail.appendChild(a);
+  });
+  const railLinks = [...rail.querySelectorAll('a')];
+  let current = 0;
+  function onScroll(){
+    const y = window.scrollY + window.innerHeight*0.35;
+    let idx = 0; legs.forEach((s,i)=>{ if(s.offsetTop <= y) idx = i; });
+    current = idx;
+    const s = legs[idx], next = legs[idx+1];
+    const a = +s.dataset.fl, b = next ? +next.dataset.fl : a;
+    const span = next ? next.offsetTop - s.offsetTop : 1;
+    const t = next ? Math.min(1, Math.max(0,(y - s.offsetTop)/span)) : 0;
+    const fl = Math.round(a + (b-a)*t);
+    $('#alt').textContent = 'FL' + String(fl).padStart(3,'0');
+    $('#phase').textContent = s.dataset.phase;
+    railLinks.forEach(l=> l.classList.toggle('on', l.dataset.for===s.id));
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    $('#progress').style.width = (max>0 ? (window.scrollY/max*100) : 0) + '%';
+    $('#nextBtn').textContent = idx >= legs.length-1 ? 'Volver al inicio' : 'Siguiente tramo';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+  onScroll();
+  function goNext(){
+    const target = current >= legs.length-1 ? legs[0] : legs[current+1];
+    target.scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'});
+  }
+  $('#nextBtn').addEventListener('click', goNext);
+  function goPrev(){ legs[Math.max(0,current-1)].scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'}); }
+  const pBtn = $('#presentBtn');
+  function setPresent(on){
+    root.classList.toggle('present', on); pBtn.setAttribute('aria-pressed', String(on));
+    if(on && document.documentElement.requestFullscreen && !document.fullscreenElement){ document.documentElement.requestFullscreen().catch(()=>{}); }
+    if(!on && document.fullscreenElement){ document.exitFullscreen().catch(()=>{}); }
+  }
+  pBtn.addEventListener('click', ()=>setPresent(!root.classList.contains('present')));
+  document.addEventListener('fullscreenchange', ()=>{ if(!document.fullscreenElement && root.classList.contains('present')){ root.classList.remove('present'); pBtn.setAttribute('aria-pressed','false'); } });
+  $('#printBtn').addEventListener('click', ()=>window.print());
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape'){ if($('#takeoff').classList.contains('on')) $('#takeoff').classList.remove('on'); else if(root.classList.contains('present')) setPresent(false); return; }
+    const tag = (e.target.tagName||'').toLowerCase();
+    if(['input','select','textarea','button','a','tr'].includes(tag)) return;
+    if(e.key==='n' || e.key==='N'){ e.preventDefault(); goNext(); }
+    if(e.key==='p' || e.key==='P'){ e.preventDefault(); setPresent(!root.classList.contains('present')); }
+    if(root.classList.contains('present')){
+      if(['ArrowDown','PageDown',' '].includes(e.key)){ e.preventDefault(); goNext(); }
+      if(['ArrowUp','PageUp'].includes(e.key)){ e.preventDefault(); goPrev(); }
+    }
+  });
+})();
+</script>
+</body>
+</html>
